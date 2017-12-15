@@ -1,0 +1,20 @@
+{
+  "Welcome": {
+    "defaults": "Welcome to React",
+    "origin": [
+      [
+        "src/Components/App.js",
+        74
+      ]
+    ]
+  },
+  "Created": {
+    "defaults": "This is a React Boilerplate created by",
+    "origin": [
+      [
+        "src/Components/App.js",
+        75
+      ]
+    ]
+  }
+}

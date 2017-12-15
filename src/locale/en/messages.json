@@ -1,0 +1,22 @@
+{
+  "Created": {
+    "translation": "",
+    "defaults": "This is a React Boilerplate created by",
+    "origin": [
+      [
+        "src/Components/App.js",
+        75
+      ]
+    ]
+  },
+  "Welcome": {
+    "translation": "",
+    "defaults": "Welcome to React",
+    "origin": [
+      [
+        "src/Components/App.js",
+        74
+      ]
+    ]
+  }
+}
