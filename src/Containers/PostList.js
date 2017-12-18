@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
@@ -56,14 +57,11 @@ class PostList extends Component {
             <div className='row'>
               <div className='col-lg-8 col-md-10 mx-auto'>
                 <div className='post-preview'>
-                  <a href='post.html'>
+                  <Link to={`${this.state.category}/${post.id}`}>
                     <h2 className='post-title'>
                       {post.title}
                     </h2>
-                    <h3 className='post-subtitle'>
-                      {post.subtitle}
-                    </h3>
-                  </a>
+                  </Link>
                   <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
                 </div>
                 <hr />

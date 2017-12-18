@@ -10,6 +10,7 @@ import registerServiceWorker from './registerServiceWorker'
 
 import App from './Containers/App'
 import PostList from './Containers/PostList'
+import Post from './Containers/Post'
 
 import './index.css'
 
@@ -29,6 +30,7 @@ ReactDOM.render(
       <div>
         <Route exact path='/' component={App} />
         <Route exact path='/:category' component={PostList} />
+        <Route exact path='/:category/:id' component={Post} />
       </div>
     </ConnectedRouter>
   </Provider>,
