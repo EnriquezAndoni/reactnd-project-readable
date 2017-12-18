@@ -4,10 +4,11 @@ import API from '../Services/Api'
 /* ------------- Types ------------- */
 
 import { I18nTypes } from '../Redux/I18nRedux'
-
+import { RetrieveTypes } from '../Redux/RetrieveRedux'
 /* ------------- Sagas ------------- */
 
 import { loadLanguage } from './I18nSagas'
+import { retrieveCategories } from './RetrieveSagas'
 
 /* ------------- API ------------- */
 
@@ -18,6 +19,7 @@ const api = API.create()
 
 export default function * root () {
   yield all([
-    takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage, api)
+    takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage),
+    takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieveCategories, api)
   ])
 }

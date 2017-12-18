@@ -2,35 +2,26 @@ import apisauce from 'apisauce'
 
 // Constructor
 const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
+  const token = Math.random().toString(36).substr(-8)
 
   // Create and configure an apisauce-based api object.
   const api = apisauce.create({
     baseURL,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Authorization': token
     },
     // 10 second timeout...
     timeout: 10000
   })
 
-  // User Log In
-  const postLogin = (username, password) => api.post('user/login', {username: username, password: password},
-    {
-      headers: {'Connection': 'keep-alive'}
-    })
+  const getCategories = () => api.get('/categories')
 
-  // User Log Out
-  const postLogout = (token) => api.post('user/logout', {},
-    {
-      headers: {'X-CSRF-Token': token}
-    })
-
+  const getCategoryPost = (post) => api.get(`/category/${post}`)
   // A list of the API functions
   return {
-    postLogin,
-    postLogout
+    getCategories,
+    getCategoryPost
   }
 }
 

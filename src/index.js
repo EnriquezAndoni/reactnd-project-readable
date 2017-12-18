@@ -8,9 +8,8 @@ import { ConnectedRouter } from 'react-router-redux'
 import { Route } from 'react-router'
 import registerServiceWorker from './registerServiceWorker'
 
-import App from './Components/App'
+import App from './Containers/App'
 import './index.css'
-
 
 // Create a history : browser history in this case
 const history = createHistory()
