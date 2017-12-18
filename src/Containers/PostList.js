@@ -47,8 +47,11 @@ class PostList extends Component {
 
     if (posts.length > 0) {
       for (const post of posts) {
+        const time = post.timestamp
+        const ts = new Date(time)
+
         paint.push(
-          <div className='container'>
+          <div key={post.id} className='container'>
             <div className='row'>
               <div className='col-lg-8 col-md-10 mx-auto'>
                 <div className='post-preview'>
@@ -56,13 +59,11 @@ class PostList extends Component {
                     <h2 className='post-title'>
                       {post.title}
                     </h2>
-                    <h3 class='post-subtitle'>
+                    <h3 className='post-subtitle'>
                       {post.subtitle}
                     </h3>
                   </a>
-                  <p className='post-meta'>Posted by
-                    <a href='#'>Start Bootstrap</a>
-                    on September 24, 2017</p>
+                  <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
                 </div>
                 <hr />
               </div>
