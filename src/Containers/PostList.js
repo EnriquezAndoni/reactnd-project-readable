@@ -10,6 +10,7 @@ import Globals from '../Utils/Globals'
 // Style
 import './Styles/bootstrap.min.css'
 import './Styles/PostListStyles.css'
+import { Images } from '../Theme'
 
 class PostList extends Component {
   /**
@@ -80,9 +81,10 @@ class PostList extends Component {
    */
   render () {
     const { category, posts } = this.state
+
     return (
       <div className='content'>
-        <header className='masthead'>
+        <header className='masthead' style={{ backgroundImage: `url(${Images[category]})` }}>
           <div className='overlay' />
           <div className='container'>
             <div className='row'>
