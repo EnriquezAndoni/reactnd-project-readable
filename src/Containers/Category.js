@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 // Translation
 import { Trans } from 'lingui-react'
@@ -7,28 +8,33 @@ import { Trans } from 'lingui-react'
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
 
+// Globals
+import Globals from '../Utils/Globals'
+
 // Style
 import './Styles/bootstrap.min.css'
 import './Styles/CategoryStyles.css'
 import { Images } from '../Theme'
+
 
 class Category extends Component {
   /**
    * @description Initialize the state
    * @constructor
    */
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       categories: []
     }
   }
 
-  componentDidMount() {
-    this.props.loadCategories('')
+  componentDidMount () {
+    const parameters = { call: Globals.category }
+    this.props.loadCategories(parameters)
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.categories !== null) {
       this.setState({ categories: nextProps.categories })
     }
@@ -45,11 +51,11 @@ class Category extends Component {
     if (categories.length > 0) {
       for (const category of categories) {
         paint.push(
-          <div key={category.name} className="col-lg-3 col-md-4 col-sm-6 portfolio-item">
-            <div className="card h-100">
-              <a className="image-link" href={category.path}>
-                <img className="card-img-top" src={Images[category.name]} alt="" />
-              </a>
+          <div key={category.name} className='col-lg-3 col-md-4 col-sm-6 portfolio-item'>
+            <div className='card h-100'>
+              <Link to={category.path}>
+                <img className='card-img-top' src={Images[category.name]} alt='' />
+              </Link>
             </div>
           </div>)
       }
@@ -61,15 +67,15 @@ class Category extends Component {
   /**
    * @description Render the component
    */
-  render() {
+  render () {
     const { categories } = this.state
     return (
-      <div className="content">
-        <div className="container">
-          <div className="header-sep">
-          <h1 className="my-4"><Trans id='Categories'>Categories</Trans></h1>
-            <div className="space-between">
-              <div className="row">
+      <div className='content'>
+        <div className='container'>
+          <div className='header-sep'>
+          <h1 className='my-4'><Trans id='Categories'>Categories</Trans></h1>
+            <div className='space-between'>
+              <div className='row'>
                 {this.renderCategories(categories)}
               </div>
             </div>
@@ -86,7 +92,7 @@ class Category extends Component {
  * @returns {object}
  *  {import} categories: loaded categories
  */
-function mapStateToProps(state) {
+function mapStateToProps (state) {
   return {
     categories: state.retrieve.categories
   }
@@ -98,7 +104,7 @@ function mapStateToProps(state) {
  * @returns {object}
  *  {func} loadCategories: dispatch the retrieveAttempt reducer
  */
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return {
     loadCategories: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters))
   }

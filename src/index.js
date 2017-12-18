@@ -9,6 +9,8 @@ import { Route } from 'react-router'
 import registerServiceWorker from './registerServiceWorker'
 
 import App from './Containers/App'
+import PostList from './Containers/PostList'
+
 import './index.css'
 
 // Create a history : browser history in this case
@@ -25,7 +27,8 @@ ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <div>
-        <Route exact path="/" component={App}/>
+        <Route exact path='/' component={App} />
+        <Route exact path='/:category' component={PostList} />
       </div>
     </ConnectedRouter>
   </Provider>,

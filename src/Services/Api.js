@@ -17,11 +17,12 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
 
   const getCategories = () => api.get('/categories')
 
-  const getCategoryPost = (post) => api.get(`/category/${post}`)
+  const getCategoryPosts = (category) => api.get(`${category}/posts/`)
+  
   // A list of the API functions
   return {
     getCategories,
-    getCategoryPost
+    getCategoryPosts
   }
 }
 

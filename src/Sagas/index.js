@@ -8,7 +8,7 @@ import { RetrieveTypes } from '../Redux/RetrieveRedux'
 /* ------------- Sagas ------------- */
 
 import { loadLanguage } from './I18nSagas'
-import { retrieveCategories } from './RetrieveSagas'
+import { retrieve } from './RetrieveSagas'
 
 /* ------------- API ------------- */
 
@@ -20,6 +20,6 @@ const api = API.create()
 export default function * root () {
   yield all([
     takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage),
-    takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieveCategories, api)
+    takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieve, api)
   ])
 }

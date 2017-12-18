@@ -18,6 +18,7 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   loading: false,
   categories: null,
+  posts: null,
   error: null
 })
 
@@ -30,6 +31,8 @@ export const retrieveData = (state, { data }) => {
 
   if (data.categories !== undefined) {
     newState = state.merge({ categories: data.categories })
+  } else {
+    newState = state.merge({ posts: data })
   }
 
   return newState

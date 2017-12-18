@@ -12,7 +12,6 @@ import I18nActions from '../Redux/I18nRedux'
 // Components
 import Category from './Category'
 
-
 class App extends Component {
   /**
    * @description Required props
@@ -25,7 +24,7 @@ class App extends Component {
    * @constructor
    * @description Initialize the state
    */
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       catalogs: {}
@@ -35,7 +34,7 @@ class App extends Component {
   /**
    * @description Load a predefined language
    */
-  componentDidMount() {
+  componentDidMount () {
     const language = this.props.language
     this.props.loadLanguage(language)
   }
@@ -44,7 +43,7 @@ class App extends Component {
    * @description Update the state with nextProps
    * @param {object} nextProps - The received props
    */
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     const { language, catalog } = nextProps
     this.setState(state => ({
       catalogs: {
@@ -59,7 +58,7 @@ class App extends Component {
    * @param {object} nextProps - The received props
    * @param {object} nextState - The next state
    */
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate (nextProps, nextState) {
     const { language } = nextProps
     const { catalogs } = nextState
 
@@ -74,7 +73,7 @@ class App extends Component {
   /**
    * @description Render the component
    */
-  render() {
+  render () {
     const { language } = this.props
     const { catalogs } = this.state
 
@@ -84,7 +83,7 @@ class App extends Component {
     return (
       <I18nProvider language={language} catalogs={catalogs}>
         <div>
-          <Category/>
+          <Category />
         </div>
       </I18nProvider>
     )
@@ -98,7 +97,7 @@ class App extends Component {
  *  {string} language: the stored language
  *  {import} catalog: the loaded catalog import
  */
-function mapStateToProps(state) {
+function mapStateToProps (state) {
   return {
     language: state.i18n.language,
     catalog: state.i18n.catalog
@@ -111,7 +110,7 @@ function mapStateToProps(state) {
  * @returns {object}
  *  {func} loadLanguage: dispatch the attemptI18n reducer
  */
-function mapDispatchToProps(dispatch) {
+function mapDispatchToProps (dispatch) {
   return {
     loadLanguage: (language) => dispatch(I18nActions.attemptI18n(language))
   }
