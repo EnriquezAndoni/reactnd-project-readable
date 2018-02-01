@@ -50,20 +50,22 @@ class PostList extends Component {
         const time = post.timestamp
         const ts = new Date(time)
 
-        paint.push(
-          <div key={post.id} className='container'>
-            <div className='row'>
-              <div className='col-lg-8 col-md-10 mx-auto'>
-                <div className='post-preview'>
-                  <Link to={`${this.state.category}/${post.id}`}>
-                    <h2 className='post-title'>{post.title}</h2>
-                  </Link>
-                  <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
+        if (!post.deleted) {
+          paint.push(
+            <div key={post.id} className='container'>
+              <div className='row'>
+                <div className='col-lg-8 col-md-10 mx-auto'>
+                  <div className='post-preview'>
+                    <Link to={`${this.state.category}/${post.id}`}>
+                      <h2 className='post-title'>{post.title}</h2>
+                    </Link>
+                    <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
+                  </div>
+                  <hr />
                 </div>
-                <hr />
               </div>
-            </div>
-          </div>)
+            </div>)
+        }
       }
     }
 
