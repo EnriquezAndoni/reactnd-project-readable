@@ -45,8 +45,6 @@ class PostList extends Component {
   renderPostList = (posts) => {
     let paint = []
 
-    console.log(posts)
-
     if (posts.length > 0) {
       for (const post of posts) {
         const time = post.timestamp
@@ -58,9 +56,7 @@ class PostList extends Component {
               <div className='col-lg-8 col-md-10 mx-auto'>
                 <div className='post-preview'>
                   <Link to={`${this.state.category}/${post.id}`}>
-                    <h2 className='post-title'>
-                      {post.title}
-                    </h2>
+                    <h2 className='post-title'>{post.title}</h2>
                   </Link>
                   <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
                 </div>
@@ -89,7 +85,7 @@ class PostList extends Component {
               <div className='col-lg-8 col-md-10 mx-auto'>
                 <div className='site-heading'>
                   <h1 className='title-h1'>{category}</h1>
-                  <span className='subheading'>Ready to learn more, prepare yourself</span>
+                  <span className='subheading'>Ready to learn more!</span>
                 </div>
               </div>
             </div>

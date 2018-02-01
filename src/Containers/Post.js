@@ -17,14 +17,54 @@ class Post extends Component {
     }
   }
 
+  componentDidMount () {
+    // Coger id del path mirar si esta en el store y coger de ahi
+    // Si no peticion
+    const { posts } = this.props
+    let path = this.props.location.pathname
+    let id = this.cleanPath(path)
+
+    if (posts !== null) this.getPostFromProps(posts, id)
+    else console.log('No')
+  }
+
+  cleanPath = (path) => {
+    let res = path.split('/')
+    return res[2]
+  }
+
+  getPostFromProps = (posts, id) => {
+    let BreakException = {}
+    try {
+      posts.forEach(post => {
+        if (post.id === id) {
+          this.setState({ post })
+          throw BreakException
+        }
+      })
+    } catch (e) {
+      if (e !== BreakException) throw e
+    }
+  }
+
   /**
    * @description Render the component
    */
   render () {
     const { post } = this.state
 
+    if (post !== null) {
+      console.log(post)
+      return (
+        <div className='content'>
+          {post.body}
+        </div>
+      )
+    }
+
     return (
       <div className='content'>
+        Hi
       </div>
     )
   }
@@ -38,7 +78,7 @@ class Post extends Component {
  */
 function mapStateToProps (state) {
   return {
-    post: state.retrieve.post
+    posts: state.retrieve.posts
   }
 }
 
