@@ -17,6 +17,9 @@ export function * retrieve (api, { parameters }) {
     case Globals.post:
       response = yield call(api.getCategoryPosts, parameters.category)
       break
+
+    case Globals.detail:
+      response = yield call(api.getPost, parameters.id)
   }
 
   if (response.ok) {

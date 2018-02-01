@@ -1,5 +1,6 @@
 import { createReducer, createActions } from 'reduxsauce'
 import Immutable from 'seamless-immutable'
+import Globals from '../Utils/Globals'
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -17,24 +18,31 @@ export default Creators
 
 export const INITIAL_STATE = Immutable({
   loading: false,
+  call: null,
   categories: null,
   posts: null,
+  detail: null,
   error: null
 })
 
 /* ------------- Reducers ------------- */
 
-export const retrieveAttempt = (state) => state.merge({ loading: true })
+export const retrieveAttempt = (state, { parameters }) => state.merge({ loading: true, call: parameters.call })
 
 export const retrieveData = (state, { data }) => {
   let newState
 
-  if (data.categories !== undefined) {
-    newState = state.merge({ categories: data.categories })
-  } else {
-    newState = state.merge({ posts: data })
+  switch (state.call) {
+    case Globals.category:
+      newState = state.merge({ categories: data.categories })
+      break
+    case Globals.post:
+      newState = state.merge({ posts: data })
+      break
+    case Globals.detail:
+      newState = state.merge({ detail: data })
+      break
   }
-
   return newState
 }
 

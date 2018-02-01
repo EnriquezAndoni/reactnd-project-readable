@@ -1,6 +1,7 @@
 const Globals = {
   category: 'CATEGORY',
-  post: 'POST'
+  post: 'POST',
+  detail: 'DETAIL'
 }
 
 export default Globals
