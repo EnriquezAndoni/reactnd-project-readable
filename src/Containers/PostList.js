@@ -26,6 +26,7 @@ class PostList extends Component {
     }
   }
 
+  
   componentDidMount () {
     const parameters = { call: Globals.post, category: this.state.category }
     this.props.loadPosts(parameters)

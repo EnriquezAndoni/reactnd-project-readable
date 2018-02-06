@@ -14,6 +14,10 @@ export function * retrieve (api, { parameters }) {
       response = yield call(api.getCategories)
       break
 
+    case Globals.allPosts:
+      response = yield call(api.getAllPosts)
+      break
+
     case Globals.post:
       response = yield call(api.getCategoryPosts, parameters.category)
       break

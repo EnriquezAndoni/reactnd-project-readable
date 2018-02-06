@@ -20,6 +20,7 @@ export const INITIAL_STATE = Immutable({
   loading: false,
   call: null,
   categories: null,
+  allPosts: null,
   posts: null,
   detail: null,
   error: null
@@ -35,6 +36,9 @@ export const retrieveData = (state, { data }) => {
   switch (state.call) {
     case Globals.category:
       newState = state.merge({ categories: data.categories })
+      break
+    case Globals.allPosts:
+      newState = state.merge({ allPosts: data })
       break
     case Globals.post:
       newState = state.merge({ posts: data })
