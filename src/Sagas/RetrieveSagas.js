@@ -25,6 +25,11 @@ export function * retrieve (api, { parameters }) {
 
     case Globals.detail:
       response = yield call(api.getPost, parameters.id)
+      break
+
+    case Globals.postComments:
+      response = yield call(api.getPostComments, parameters.id)
+      break
   }
 
   if (response.ok) {

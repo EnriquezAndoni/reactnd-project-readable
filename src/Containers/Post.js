@@ -18,7 +18,7 @@ class Post extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      post: null
+      id: null
     }
   }
 
@@ -28,6 +28,7 @@ class Post extends Component {
     const { posts, loadPost } = this.props
     let path = this.props.location.pathname
     let id = this.cleanPath(path)
+    this.setState({ id })
 
     if (posts !== null) this.getPostFromProps(posts, id)
     else {
@@ -56,36 +57,102 @@ class Post extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.detail !== null) {
-      this.setState({ post: nextProps.detail })
+    if (nextProps.comments === null) {
+      const params = { call: Globals.postComments, id: this.state.id }
+      this.props.loadPost(params)
     }
+  }
+
+  renderComments = (comments) => {
+
+    // console.log('HEY')
+    console.log(comments)
+
+
+
+    let paint = []
+    if (comments === null) return paint
+    if (comments.length > 0) {
+      for (const comment of comments) {
+        const time = comment.timestamp
+        const ts = new Date(time)
+        paint.push(
+
+          <div className="col-lg-8 col-md-10 mx-auto" key={comment.id}>
+            <div className="panel panel-white post panel-shadow">
+              <div className="post-heading">
+                <div className="pull-left image">
+                  <img src="http://bootdey.com/img/Content/user_1.jpg" className="img-circle avatar" alt="user profile image" />
+                </div>
+                <div className="pull-left meta">
+                  <div className="title h5">
+                    <a href="#"><b>{comment.autho}</b></a>
+                  </div>
+                  <h6 className="text-muted time">{ts.toDateString()}</h6>
+                </div>
+              </div>
+              <div className="post-description">
+                <p>{comment.body}</p>
+                <div className="stats">
+                  <a href="#" className="btn btn-default stat-item">
+                    <i className="fa fa-thumbs-up icon"></i>{comment.voteScore}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      }
+    }
+
+    return paint
+
   }
 
   /**
    * @description Render the component
    */
   render () {
-    const { post } = this.state
+    const { detail, comments } = this.props
 
-    if (post !== null) {
-      console.log(post)
-      const time = post.timestamp
+    if (detail !== null) {
+      const time = detail.timestamp
       const ts = new Date(time)
       return (
         <div className='content'>
           <header className='masthead'>
             <div className='overlay' />
           </header>
-          <div key={post.id} className='container'>
+          <div key={detail.id} className='container'>
             <div className='row'>
               <div className='col-lg-8 col-md-10 mx-auto'>
                 <div className='post-preview'>
-                  <h2 className='post-title'>{post.title}</h2>
-                  <p className='post-meta'>Posted by *{post.author}* on {ts.toDateString()}</p>
+                  <h2 className='post-title'>{detail.title}</h2>
+                  <p className='post-meta'>Posted by *{detail.author}* on {ts.toDateString()} votes: {detail.voteScore}</p>
                 </div>
                 <hr />
                 <div className='selection'>
-                  {post.body}
+                  {detail.body}
+                </div>
+                <hr />
+
+                <div className="row" >
+                  {this.renderComments(comments)}
+                </div>
+
+                <div className="row">
+
+                  <div className="col-lg-8 col-md-10 mx-auto">
+                    <div className="widget-area no-padding blank">
+                      <div className="status-upload">
+                        <form>
+                          <textarea placeholder="Type your new comment" ></textarea>
+                          <button type="submit" className="btn btn-success green">Share</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -108,7 +175,8 @@ class Post extends Component {
 function mapStateToProps (state) {
   return {
     posts: state.retrieve.posts,
-    detail: state.retrieve.detail
+    detail: state.retrieve.detail,
+    comments: state.retrieve.comments
   }
 }
 

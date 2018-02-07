@@ -23,6 +23,7 @@ export const INITIAL_STATE = Immutable({
   allPosts: null,
   posts: null,
   detail: null,
+  comments: null,
   error: null
 })
 
@@ -45,6 +46,9 @@ export const retrieveData = (state, { data }) => {
       break
     case Globals.detail:
       newState = state.merge({ detail: data })
+      break
+    case Globals.postComments:
+      newState = state.merge({ comments: data })
       break
   }
   return newState

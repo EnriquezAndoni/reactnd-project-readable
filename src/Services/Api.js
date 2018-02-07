@@ -23,6 +23,8 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
 
   const getPost = (id) => api.get(`/posts/${id}`)
 
+  const getPostComments = (id) => api.get(`/posts/${id}/comments`)
+
   const uploadPost = (post) => api.post('/posts',
     {
       id: post.id,
@@ -39,6 +41,7 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
     getAllPosts,
     getCategoryPosts,
     getPost,
+    getPostComments,
     uploadPost
   }
 }
