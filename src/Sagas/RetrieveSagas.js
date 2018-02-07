@@ -16,6 +16,7 @@ export function * retrieve (api, { parameters }) {
 
     case Globals.allPosts:
       response = yield call(api.getAllPosts)
+      console.log(response)
       break
 
     case Globals.post:

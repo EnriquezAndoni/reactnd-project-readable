@@ -7,6 +7,7 @@ import createHistory from 'history/createBrowserHistory'
 import { ConnectedRouter } from 'react-router-redux'
 import { Route } from 'react-router'
 import registerServiceWorker from './registerServiceWorker'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import App from './Containers/App'
 import PostList from './Containers/PostList'
@@ -27,11 +28,13 @@ const store = createStore(history)
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <div>
-        <Route exact path='/' component={App} />
-        <Route exact path='/:category' component={PostList} />
-        <Route exact path='/:category/:id' component={Post} />
-      </div>
+      <MuiThemeProvider>
+        <div>
+          <Route exact path='/' component={App} />
+          <Route exact path='/:category' component={PostList} />
+          <Route exact path='/:category/:id' component={Post} />
+        </div>
+      </MuiThemeProvider>
     </ConnectedRouter>
   </Provider>,
   document.getElementById('root')

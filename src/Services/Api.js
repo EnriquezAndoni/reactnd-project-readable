@@ -23,12 +23,23 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
 
   const getPost = (id) => api.get(`/posts/${id}`)
 
+  const uploadPost = (post) => api.post('/posts',
+    {
+      id: post.id,
+      timestamp: post.timestamp,
+      title: post.title,
+      body: post.title,
+      author: post.author,
+      category: post.category
+    }, {})
+
   // A list of the API functions
   return {
     getCategories,
     getAllPosts,
     getCategoryPosts,
-    getPost
+    getPost,
+    uploadPost
   }
 }
 

@@ -1,6 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import TextField from 'material-ui/TextField'
+
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
 
 // Select
 import Select from 'react-select'
@@ -11,6 +18,7 @@ import { Trans } from 'lingui-react'
 
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
+import UploadActions from '../Redux/UploadRedux'
 
 // Globals
 import Globals from '../Utils/Globals'
@@ -20,6 +28,8 @@ import './Styles/bootstrap.min.css'
 import './Styles/CategoryStyles.css'
 import { Images } from '../Theme'
 
+// UIID
+const uuidv4 = require('uuid/v4')
 
 class Category extends Component {
   /**
@@ -31,7 +41,13 @@ class Category extends Component {
     this.state = {
       categories: [],
       posts: [],
-      selectedOption: ''
+      selectedOption: '',
+      open: false,
+      checked: false,
+      value: '',
+      author: '',
+      title: '',
+      body: ''
     }
   }
 
@@ -82,6 +98,20 @@ class Category extends Component {
     return paint
   }
 
+  renderBoxCategories = (categories) => {
+    let paint = []
+
+    if (categories.length > 0) {
+      for (const category of categories) {
+        paint.push(
+          <MenuItem value={category.name} primaryText={category.name} />
+        )
+      }
+    }
+
+    return paint
+  }
+
   renderPosts = (posts) => {
     let paint = []
 
@@ -121,9 +151,32 @@ class Category extends Component {
     return paint
   }
 
-  handleChange = (selectedOption) => {
-    this.setState({ selectedOption })
+  handleChange = (selectedOption) => this.setState({ selectedOption })
+  handleOpen = () => this.setState({open: true})
+  handleClose = () => this.setState({open: false})
+  handleTitle = (title) => this.setState({title})
+  handleBody = (body) => this.setState({body})
+  handleAuthor = (author) => this.setState({author})
+  handleChangeBox = (event, index, value) => this.setState({value})
+  handleSubmit = () => {
+    const { title, author, body, value } = this.state
+    if (title !== '' && author !== '' && body !== '' && value !== '') {
+      const post = {
+        title,
+        author,
+        body,
+        category: value,
+        timestamp: Date.now(),
+        id: String(uuidv4())
+      }
+      this.props.uploadPost(post)
+      this.handleClose()
+      const parameters = { call: Globals.allPosts }
+      this.props.loadAction(parameters)
+    }
   }
+
+
 
   /**
    * @description Render the component
@@ -131,6 +184,20 @@ class Category extends Component {
   render () {
     const { categories, posts, selectedOption } = this.state
     const value = selectedOption && selectedOption.value
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary={true}
+        keyboardFocused={true}
+        onClick={this.handleSubmit}
+      />,
+    ]
 
     return (
       <div className='content'>
@@ -158,6 +225,38 @@ class Category extends Component {
               <div className='row'>
                 {this.renderPosts(posts)}
               </div>
+              <FloatingActionButton onClick={this.handleOpen}/>
+              <Dialog
+                title="Dialog With Actions"
+                actions={actions}
+                modal={false}
+                open={this.state.open}
+                onRequestClose={this.handleClose}
+              >
+                <TextField
+                  hintText="Title"
+                  fullWidth={true}
+                  onChange={(event, value) => this.handleTitle(value)}
+                /><br />
+                <TextField
+                  hintText="Body"
+                  fullWidth={true}
+                  onChange={(event, value) => this.handleBody(value)}
+                /><br />
+                <TextField
+                  hintText="Author"
+                  fullWidth={true}
+                  onChange={(event, value) => this.handleAuthor(value)}
+                /><br />
+                <SelectField
+                  floatingLabelText="Category"
+                  value={this.state.value}
+                  onChange={this.handleChangeBox}
+                  fullWidth={true}
+                >
+                  {this.renderBoxCategories(categories)}
+                </SelectField>
+              </Dialog>
             </div>
           </div>
         </div>
@@ -187,7 +286,8 @@ function mapStateToProps (state) {
  */
 function mapDispatchToProps (dispatch) {
   return {
-    loadAction: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters))
+    loadAction: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
+    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post))
   }
 }
 
