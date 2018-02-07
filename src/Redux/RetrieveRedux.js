@@ -50,6 +50,8 @@ export const retrieveData = (state, { data }) => {
     case Globals.postComments:
       newState = state.merge({ comments: data })
       break
+    default:
+      break
   }
   return newState
 }
