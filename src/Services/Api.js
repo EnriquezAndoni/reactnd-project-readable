@@ -2,35 +2,47 @@ import apisauce from 'apisauce'
 
 // Constructor
 const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
+  const token = Math.random().toString(36).substr(-8)
 
   // Create and configure an apisauce-based api object.
   const api = apisauce.create({
     baseURL,
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Authorization': token
     },
     // 10 second timeout...
     timeout: 10000
   })
 
-  // User Log In
-  const postLogin = (username, password) => api.post('user/login', {username: username, password: password},
-    {
-      headers: {'Connection': 'keep-alive'}
-    })
+  const getCategories = () => api.get('/categories')
 
-  // User Log Out
-  const postLogout = (token) => api.post('user/logout', {},
+  const getAllPosts = () => api.get('/posts')
+
+  const getCategoryPosts = (category) => api.get(`${category}/posts/`)
+
+  const getPost = (id) => api.get(`/posts/${id}`)
+
+  const getPostComments = (id) => api.get(`/posts/${id}/comments`)
+
+  const uploadPost = (post) => api.post('/posts',
     {
-      headers: {'X-CSRF-Token': token}
-    })
+      id: post.id,
+      timestamp: post.timestamp,
+      title: post.title,
+      body: post.title,
+      author: post.author,
+      category: post.category
+    }, {})
 
   // A list of the API functions
   return {
-    postLogin,
-    postLogout
+    getCategories,
+    getAllPosts,
+    getCategoryPosts,
+    getPost,
+    getPostComments,
+    uploadPost
   }
 }
 
