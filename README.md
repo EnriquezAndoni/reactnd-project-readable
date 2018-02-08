@@ -2,24 +2,39 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Table of Contents
 
+- [Start](#start)
+- [Description](#description)
 - [Folder Structure](#folder-structure)
 - [Configuration](#project-configuration)
 - [Version Control Integration](#version-control-integration)
-- [Something Missing?](#something-missing?)
 
-## START
+## Start
 To get started developing right away:
 
-* install all project dependencies with ```yarn install```
-* start the development server with ```yarn start```
 
+
+* Install and start the API server from [Udacity Starter](https://github.com/udacity/reactnd-project-readable-starter)
+    * cd api-server
+    * npm install
+    * node server
+
+* In another terminal window launch the web app
+    * install all project dependencies with ```yarn install```
+    * start the react web app with ```yarn start```
+
+
+## Description
+
+This is the project for the final assessment project for Udacity's Redux course. Users are be able to post content to predefined categories, comment on their posts and other users' posts, and vote on posts and comments. Users are also able to edit and delete posts and comments.
+
+This repository includes the code for react web app.
 
 ## Folder Structure
 
 Your project should look like this:
 
 ```
-my-app/
+reactnd-project-readable/
   node_modules/
   public/
     index.html
@@ -86,7 +101,3 @@ The project works with a different configuration:
   This style guide acts as the official guide to follow in the project.
 
   For more info visit [Git commit wiki](https://github.com/EnriquezAndoni/react-boilerplate/wiki/Git)
-
-## Something Missing?
-
-We are always open to [your feedback](https://github.com/EnriquezAndoni/react-boilerplate/issues)
