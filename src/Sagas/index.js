@@ -11,7 +11,7 @@ import { UploadTypes } from '../Redux/UploadRedux'
 
 import { loadLanguage } from './I18nSagas'
 import { retrieve, retrieveHome } from './RetrieveSagas'
-import { uploadContent } from './UploadSagas'
+import { uploadContent, uploadComment } from './UploadSagas'
 
 /* ------------- API ------------- */
 
@@ -25,6 +25,7 @@ export default function * root () {
     takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage),
     takeLatest(RetrieveTypes.RETRIEVE_HOME_REQUEST, retrieveHome, api),
     takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieve, api),
-    takeLatest(UploadTypes.UPLOAD_REQUEST, uploadContent, api)
+    takeLatest(UploadTypes.UPLOAD_REQUEST, uploadContent, api),
+    takeLatest(UploadTypes.UPLOAD_COMMENT_REQUEST, uploadComment, api)
   ])
 }

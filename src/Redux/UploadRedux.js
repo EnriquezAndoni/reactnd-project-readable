@@ -6,7 +6,10 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   uploadRequest: ['post'],
   uploadSuccess: null,
-  uploadFailure: ['error']
+  uploadFailure: ['error'],
+  uploadCommentRequest: ['comment'],
+  uploadCommentSuccess: null,
+  uploadCommentFailure: ['error']
 })
 
 export const UploadTypes = Types
@@ -27,10 +30,19 @@ export const uploadSuccess = (state) => state.merge({ fetching: false, error: nu
 
 export const uploadFailure = (state, { error }) => state.merge({ fetching: false, error })
 
+export const uploadCommentRequest = (state) => state.merge({ fetching: true })
+
+export const uploadCommentSuccess = (state) => state.merge({ fetching: false, error: null })
+
+export const uploadCommentFailure = (state, { error }) => state.merge({ fetching: false, error })
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.UPLOAD_REQUEST]: uploadRequest,
   [Types.UPLOAD_SUCCESS]: uploadSuccess,
-  [Types.UPLOAD_FAILURE]: uploadFailure
+  [Types.UPLOAD_FAILURE]: uploadFailure,
+  [Types.UPLOAD_COMMENT_REQUEST]: uploadCommentRequest,
+  [Types.UPLOAD_COMMENT_SUCCESS]: uploadCommentSuccess,
+  [Types.UPLOAD_COMMENT_FAILURE]: uploadCommentFailure
 })

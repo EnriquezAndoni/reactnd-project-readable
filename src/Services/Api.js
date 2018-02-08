@@ -30,9 +30,18 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
       id: post.id,
       timestamp: post.timestamp,
       title: post.title,
-      body: post.title,
+      body: post.body,
       author: post.author,
       category: post.category
+    }, {})
+
+  const uploadComment = (comment) => api.post('/comments',
+    {
+      id: comment.id,
+      timestamp: comment.timestamp,
+      body: comment.body,
+      author: comment.author,
+      parentId: comment.parentId
     }, {})
 
   // A list of the API functions
@@ -42,7 +51,8 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
     getCategoryPosts,
     getPost,
     getPostComments,
-    uploadPost
+    uploadPost,
+    uploadComment
   }
 }
 

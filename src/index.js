@@ -11,6 +11,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import App from './Containers/App'
 import Categories from './Containers/Categories'
+import Post from './Containers/Post'
 
 import './index.css'
 
@@ -31,6 +32,7 @@ ReactDOM.render(
         <div>
           <Route exact path='/' component={App} />
           <Route exact path='/:category' component={Categories} />
+          <Route exact path='/:category/:id' component={Post} />
         </div>
       </MuiThemeProvider>
     </ConnectedRouter>

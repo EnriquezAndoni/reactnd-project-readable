@@ -36,7 +36,6 @@ class Categories extends Component {
     this.state = {
       filter: null,
       open: false,
-      select: null,
       author: '',
       title: '',
       body: '',
@@ -49,10 +48,6 @@ class Categories extends Component {
       const parameters = { call: Globals.post, category: this.state.category }
       this.props.loadPosts(parameters)
     }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.categories === null) this.props.retrieveHome()
   }
 
   handleChangeFilter = (event, index, value) => this.setState({filter: value})
@@ -76,7 +71,6 @@ class Categories extends Component {
       }
 
       for (const post of helper) {
-        console.log(post)
         const time = post.timestamp
         const ts = new Date(time)
 
@@ -86,7 +80,9 @@ class Categories extends Component {
               <div className='a-1'>
                 <div className='col-md-6 abt-left'>
                   <h6>{post.category}</h6>
-                  <h3>{post.title}</h3>
+                  <Link to={`${this.state.category}/${post.id}`}>
+                    <h3>{post.title}</h3>
+                  </Link>
                   <p>{post.body}</p>
                   <label>{ts.toDateString()} - Votes: {post.voteScore}</label>
                 </div>
@@ -104,26 +100,25 @@ class Categories extends Component {
   handleTitle = (title) => this.setState({title})
   handleBody = (body) => this.setState({body})
   handleAuthor = (author) => this.setState({author})
-  handleChangeSelect = (event, index, value) => this.setState({select: value})
   handleSubmit = () => {
-    const { title, author, body, select } = this.state
-    if (title !== '' && author !== '' && body !== '' && select !== null) {
+    const { title, author, body, category } = this.state
+    if (title !== '' && author !== '' && body !== '') {
       const post = {
         title,
         author,
         body,
-        category: select,
+        category,
         timestamp: Date.now(),
         id: String(uuidv4())
       }
       this.props.uploadPost(post)
       this.handleClose()
-      const parameters = { call: Globals.post, category: this.state.category }
+      const parameters = { call: Globals.post, category }
       this.props.loadPosts(parameters)
     }
   }
 
-  renderDialog = (categories) => {
+  renderDialog = () => {
 
     const actions = [
       <FlatButton
@@ -163,30 +158,9 @@ class Categories extends Component {
             fullWidth={true}
             onChange={(event, value) => this.handleAuthor(value)}
           /><br />
-          <SelectField
-            floatingLabelText="Select the category"
-            value={this.state.select}
-            onChange={this.handleChangeSelect}
-            fullWidth={true}
-          >
-            { this.renderCategoriesMenu(categories) }
-          </SelectField>
         </Dialog>
       </div>
     )
-  }
-
-
-  renderCategoriesMenu = (categories) => {
-    let render = []
-    if (categories !== null) {
-      categories.categories.forEach(category => {
-        render.push(
-          <MenuItem key={category.name} value={category.name} primaryText={category.name} />
-        )
-      })
-    }
-    return render
   }
 
   /**
@@ -194,7 +168,7 @@ class Categories extends Component {
    */
   render () {
     const { filter, category } = this.state
-    const { categories, posts } = this.props
+    const { posts } = this.props
 
     return (
       <div className='about'>
@@ -219,7 +193,7 @@ class Categories extends Component {
             </div>
             <div className='col-md-4 about-right heading'>
               <div className='abt-2'>
-                { this.renderDialog(categories) }
+                { this.renderDialog() }
               </div>
             </div>
             <div className='clearfix' />
@@ -238,7 +212,6 @@ class Categories extends Component {
  */
 function mapStateToProps (state) {
   return {
-    categories: state.retrieve.categories,
     posts: state.retrieve.posts
   }
 }
@@ -253,8 +226,7 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     loadPosts: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
-    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post)),
-    retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest())
+    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post))
   }
 }
 
