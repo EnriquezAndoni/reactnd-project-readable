@@ -10,7 +10,7 @@ import { UploadTypes } from '../Redux/UploadRedux'
 /* ------------- Sagas ------------- */
 
 import { loadLanguage } from './I18nSagas'
-import { retrieve } from './RetrieveSagas'
+import { retrieve, retrieveHome } from './RetrieveSagas'
 import { uploadContent } from './UploadSagas'
 
 /* ------------- API ------------- */
@@ -23,6 +23,7 @@ const api = API.create()
 export default function * root () {
   yield all([
     takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage),
+    takeLatest(RetrieveTypes.RETRIEVE_HOME_REQUEST, retrieveHome, api),
     takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieve, api),
     takeLatest(UploadTypes.UPLOAD_REQUEST, uploadContent, api)
   ])

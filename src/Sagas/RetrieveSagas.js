@@ -41,3 +41,14 @@ export function * retrieve (api, { parameters }) {
     yield put(RetrieveActions.retrieveFailure(response.problem))
   }
 }
+
+export function * retrieveHome (api) {
+  const categories = yield call(api.getCategories)
+  const posts = yield call(api.getAllPosts)
+
+  if (categories.ok && posts.ok) {
+    yield put(RetrieveActions.retrieveHomeSuccess(categories.data, posts.data))
+  } else {
+    yield put(RetrieveActions.retrieveHomeFailure(categories.problem, posts.problem))
+  }
+}
