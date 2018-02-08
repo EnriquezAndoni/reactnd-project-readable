@@ -12,7 +12,11 @@ const { Types, Creators } = createActions({
 
   retrieveHomeRequest: null,
   retrieveHomeSuccess: ['categories', 'allPosts'],
-  retrieveHomeFailure: ['e1', 'e2']
+  retrieveHomeFailure: ['e1', 'e2'],
+
+  retrieveDetailRequest: ['id'],
+  retrieveDetailSuccess: ['detail', 'comments'],
+  retrieveDetailFailure: ['e1', 'e2']
 })
 
 export const RetrieveTypes = Types
@@ -41,20 +45,8 @@ export const retrieveData = (state, { data }) => {
   let newState
 
   switch (state.call) {
-    case Globals.category:
-      newState = state.merge({ categories: data.categories })
-      break
-    case Globals.allPosts:
-      newState = state.merge({ allPosts: data })
-      break
     case Globals.post:
       newState = state.merge({ posts: data })
-      break
-    case Globals.detail:
-      newState = state.merge({ detail: data })
-      break
-    case Globals.postComments:
-      newState = state.merge({ comments: data })
       break
     default:
       break
@@ -72,6 +64,12 @@ export const retrieveHomeSuccess = (state, { categories, allPosts }) => state.me
 
 export const retrieveHomeFailure = (state, { e1, e2 }) => state.merge({loading: false, e1, e2})
 
+export const retrieveDetailRequest = (state) => state.merge({ loading: true })
+
+export const retrieveDetailSuccess = (state, { detail, comments }) => state.merge({loading: false, error: null, detail, comments})
+
+export const retrieveDetailFailure = (state, { e1, e2 }) => state.merge({loading: false, e1, e2})
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -82,5 +80,9 @@ export const reducer = createReducer(INITIAL_STATE, {
 
   [Types.RETRIEVE_HOME_REQUEST]: retrieveHomeRequest,
   [Types.RETRIEVE_HOME_SUCCESS]: retrieveHomeSuccess,
-  [Types.RETRIEVE_HOME_FAILURE]: retrieveHomeFailure
+  [Types.RETRIEVE_HOME_FAILURE]: retrieveHomeFailure,
+
+  [Types.RETRIEVE_DETAIL_REQUEST]: retrieveDetailRequest,
+  [Types.RETRIEVE_DETAIL_SUCCESS]: retrieveDetailSuccess,
+  [Types.RETRIEVE_DETAIL_FAILURE]: retrieveDetailFailure
 })

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import NoMatch from './NoMatch'
 
 import IconButton from 'material-ui/IconButton'
 
@@ -24,6 +25,7 @@ import Globals from '../Utils/Globals'
 // Style
 import './Styles/bootstrap.css'
 import './Styles/style.css'
+
 
 // UIID
 const uuidv4 = require('uuid/v4')
@@ -133,12 +135,12 @@ class Categories extends Component {
 
     const actions = [
       <FlatButton
-        label="Cancel"
+        label='Cancel'
         primary
         onClick={this.handleClose}
       />,
       <FlatButton
-        label="Submit"
+        label='Submit'
         primary
         onClick={this.handleSubmit}
       />,
@@ -146,26 +148,27 @@ class Categories extends Component {
 
     return (
       <div>
+        <Link to='/'><RaisedButton label={'Home'} /></Link>
         <RaisedButton label={'Add new post'} onClick={this.handleOpen}/>
         <Dialog
-          title="Create your new post"
+          title='Create your new post'
           actions={actions}
           modal={false}
           open={this.state.open}
           onRequestClose={this.handleClose}
         >
           <TextField
-            hintText="Title"
+            hintText='Title'
             fullWidth={true}
             onChange={(event, value) => this.handleTitle(value)}
           /><br />
           <TextField
-            hintText="Body"
+            hintText='Body'
             fullWidth={true}
             onChange={(event, value) => this.handleBody(value)}
           /><br />
           <TextField
-            hintText="Author"
+            hintText='Author'
             fullWidth={true}
             onChange={(event, value) => this.handleAuthor(value)}
           /><br />
@@ -176,45 +179,61 @@ class Categories extends Component {
 
   render () {
     const { filter, category } = this.state
-    const { posts } = this.props
+    const { posts, categories } = this.props
 
-    return (
-      <div className='about'>
-        <div className='container'>
-          <div className='about-main'>
-            <div className='col-md-8 about-left'>
-              <div className='about-one'>
-                <p>Posts</p>
-                <h3>{category}</h3>
-                <div className="about-tre">
-                  <SelectField
-                    floatingLabelText="Post filter"
-                    value={filter}
-                    onChange={this.handleChangeFilter}
-                    fullWidth={true} >
-                    <MenuItem value={'date'} primaryText={'Order by date'} />
-                    <MenuItem value={'votes'} primaryText={'Order by votes'} />
-                  </SelectField>
-                  { this.renderPost(posts) }
+    if (categories === null) return <div/>
+
+    let redirect = true
+
+    for (let cat of categories.categories) {
+      if (category === cat.name && !cat.deleted) {
+        redirect = false
+        break
+      }
+    }
+
+    if (!redirect) {
+      return (
+        <div className='about'>
+          <div className='container'>
+            <div className='about-main'>
+              <div className='col-md-8 about-left'>
+                <div className='about-one'>
+                  <p>Posts</p>
+                  <h3>{category}</h3>
+                  <div className='about-tre'>
+                    <SelectField
+                      floatingLabelText='Post filter'
+                      value={filter}
+                      onChange={this.handleChangeFilter}
+                      fullWidth={true} >
+                      <MenuItem value={'date'} primaryText={'Order by date'} />
+                      <MenuItem value={'votes'} primaryText={'Order by votes'} />
+                    </SelectField>
+                    { this.renderPost(posts) }
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className='col-md-4 about-right heading'>
-              <div className='abt-2'>
-                { this.renderDialog() }
+              <div className='col-md-4 about-right heading'>
+                <div className='abt-2'>
+                  { this.renderDialog() }
+                </div>
               </div>
+              <div className='clearfix' />
             </div>
-            <div className='clearfix' />
           </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      return <NoMatch/>
+    }
   }
 }
 
 function mapStateToProps (state) {
   return {
-    posts: state.retrieve.posts
+    posts: state.retrieve.posts,
+    categories: state.retrieve.categories
   }
 }
 

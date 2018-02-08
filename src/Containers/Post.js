@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
+import NoMatch from './NoMatch'
+import RaisedButton from 'material-ui/RaisedButton'
 
 // Dialog
 import Dialog from 'material-ui/Dialog'
@@ -10,9 +13,6 @@ import IconButton from 'material-ui/IconButton'
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
 import UploadActions from '../Redux/UploadRedux'
-
-// Globals
-import Globals from '../Utils/Globals'
 
 // Style
 import './Styles/bootstrap.css'
@@ -34,21 +34,27 @@ class Post extends Component {
       pTitle: '',
       pAuthor: '',
       pBody: '',
-      category: ''
+      category: '',
+
     }
   }
 
   componentDidMount () {
-    let path = this.props.location.pathname
-    let id = this.cleanPath(path)
-    const parameters = { call: Globals.detail, id }
-    this.props.loadContent(parameters)
-    this.setState({id})
+    this.props.retrieveHome()
   }
 
   componentWillReceiveProps (nextProps) {
-    const parameters = { call: Globals.postComments, id: this.state.id }
-    this.props.loadContent(parameters)
+    if (this.props.detail === null) {
+      let path = this.props.location.pathname
+      let id = this.cleanPath(path)
+      for (let post of nextProps.posts) {
+        if (post.id === id) {
+          this.props.loadContent(id)
+          this.setState({id})
+          break
+        }
+      }
+    }
   }
 
   cleanPath = (path) => {
@@ -91,8 +97,7 @@ class Post extends Component {
       option
     }
     this.props.voteComment(comment)
-    const parameters = { call: Globals.postComments, id: this.state.id }
-    this.props.loadContent(parameters)
+    this.props.loadContent(this.state.id)
   }
 
   handleBody = (body) => this.setState({body})
@@ -108,8 +113,7 @@ class Post extends Component {
         id: String(uuidv4())
       }
       this.props.uploadComment(comment)
-      const parameters = { call: Globals.postComments, id: this.state.id }
-      this.props.loadContent(parameters)
+      this.props.loadContent(this.state.id)
     }
   }
 
@@ -149,8 +153,7 @@ class Post extends Component {
         id: edit.id
       }
       this.props.editComment(comment)
-      const parameters = { call: Globals.postComments, id: this.state.id }
-      this.props.loadContent(parameters)
+      this.props.loadContent(this.state.id)
       this.handleCloseC()
     }
   }
@@ -228,8 +231,7 @@ class Post extends Component {
         id: detail.id
       }
       this.props.editPost(post)
-      const parameters = { call: Globals.detail, id: this.state.id }
-      this.props.loadContent(parameters)
+      this.props.loadContent(this.state.id)
       this.handleClose()
     }
   }
@@ -286,73 +288,95 @@ class Post extends Component {
       option
     }
     this.props.votePost(post)
-    const parameters = { call: Globals.detail, id: this.state.id }
-    this.props.loadContent(parameters)
+    this.props.loadContent(this.state.id)
+  }
+
+  goToCategory = () => {
+    this.props.history.goBack()
   }
 
   render () {
 
-    const { detail, comments } = this.props
+    const { detail, comments, posts } = this.props
 
-
-    if (detail === null || comments === null) return <div />
+    if (posts === null) return <div />
+    else if (detail === null || comments === null) return <NoMatch/>
 
     const time = detail.timestamp
     const ts = new Date(time)
 
-    return (
-      <div >
-        <div className='single'>
-          <div className='container'>
-            <div className='single-top'>
-              <div className=' single-grid'>
-                <h4>{detail.title}</h4>
-                <ul className='blog-ic'>
-                  <li><span> <i className='glyphicon glyphicon-user' />{detail.author}</span></li>
-                  <li><span><i className='glyphicon glyphicon-time' />{ts.toDateString()}</span></li>
-                  <li><span><i className='glyphicon glyphicon-plane' />{detail.voteScore}</span></li>
-                </ul>
-                <p>{detail.body}</p>
-                <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
-                <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost()}} />
-                <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(detail, 'upVote')}}/>
-                <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(detail, 'downVote')}}/>
-              </div>
-              <div className='comments heading'>
-                <h3>Comments</h3>
-                { this.renderComments(comments) }
-              </div>
-              <div className='comment-bottom heading'>
-                <h3>Leave a Comment</h3>
-                { this.renderCommentDialog() }
+    let redirect = true
+
+    for (let post of posts) {
+      if (post.id === detail.id && !detail.deleted) {
+        redirect = false
+        break
+      }
+    }
+
+    if (!redirect) {
+      return (
+        <div>
+          <div className='single'>
+            <div className='container'>
+              <Link to="/"><RaisedButton label={'Home'} /></Link>
+              <RaisedButton label={'Back'} onClick={() => this.goToCategory()}/>
+              <div className='single-top'>
+                <div className=' single-grid'>
+                  <h4>{detail.title}</h4>
+                  <ul className='blog-ic'>
+                    <li><span> <i className='glyphicon glyphicon-user' />{detail.author}</span></li>
+                    <li><span><i className='glyphicon glyphicon-time' />{ts.toDateString()}</span></li>
+                    <li><span><i className='glyphicon glyphicon-plane' />{detail.voteScore}</span></li>
+                    <li><span><i className='glyphicon glyphicon-comment' />{detail.commentCount}</span></li>
+                  </ul>
+                  <p>{detail.body}</p>
+                  <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
+                  <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost()}} />
+                  <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(detail, 'upVote')}}/>
+                  <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(detail, 'downVote')}}/>
+                </div>
+                <div className='comments heading'>
+                  <h3>Comments</h3>
+                  { this.renderComments(comments) }
+                </div>
+                <div className='comment-bottom heading'>
+                  <h3>Leave a Comment</h3>
+                  { this.renderCommentDialog() }
+                </div>
               </div>
             </div>
+            { this.editPostDialog() }
+            { this.editCommentDialog() }
           </div>
-          { this.editPostDialog() }
-          { this.editCommentDialog() }
         </div>
-      </div>
-    )
+      )
+    } else {
+      return <NoMatch/>
+    }
+
   }
 }
 
 function mapStateToProps (state) {
   return {
     detail: state.retrieve.detail,
-    comments: state.retrieve.comments
+    comments: state.retrieve.comments,
+    posts: state.retrieve.allPosts,
   }
 }
 
 function mapDispatchToProps (dispatch) {
   return {
-    loadContent: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
+    loadContent: (id) => dispatch(RetrieveActions.retrieveDetailRequest(id)),
     uploadComment: (comment) => dispatch(UploadActions.uploadCommentRequest(comment)),
     editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
     deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id)),
     editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
     deletePost: (id) => dispatch(UploadActions.deletePostRequest(id)),
     votePost: (post) => dispatch(UploadActions.votePostRequest(post)),
-    voteComment: (comment) => dispatch(UploadActions.voteCommentRequest(comment))
+    voteComment: (comment) => dispatch(UploadActions.voteCommentRequest(comment)),
+    retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest())
   }
 }
 
