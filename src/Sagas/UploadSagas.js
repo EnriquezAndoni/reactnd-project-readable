@@ -15,8 +15,28 @@ export function * uploadComment (api, { comment }) {
   const response = yield call(api.uploadComment, comment)
 
   if (response.ok) {
-    yield put(UploadActions.uploadSuccess())
+    yield put(UploadActions.uploadCommentSuccess())
   } else {
-    yield put(UploadActions.uploadFailure(response.problem))
+    yield put(UploadActions.uploadCommentFailure(response.problem))
+  }
+}
+
+export function * editComment (api, { comment }) {
+  const response = yield call(api.editComment, comment)
+
+  if (response.ok) {
+    yield put(UploadActions.editCommentSuccess())
+  } else {
+    yield put(UploadActions.editCommentFailure(response.problem))
+  }
+}
+
+export function * deleteComment (api, { id }) {
+  const response = yield call(api.deleteComment, id)
+
+  if (response.ok) {
+    yield put(UploadActions.deleteCommentSuccess())
+  } else {
+    yield put(UploadActions.deleteCommentFailure(response.problem))
   }
 }

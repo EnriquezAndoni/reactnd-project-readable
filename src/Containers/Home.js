@@ -52,7 +52,7 @@ class Home extends Component {
           <div className='might-grid' key={category.name}>
             <div className='might-top'>
               <Link to={category.path}>
-                <h4><a>{category.name}</a></h4>
+                <h4>{category.name}</h4>
               </Link>
               <p>Find the best post related to this category.</p>
             </div>
@@ -86,7 +86,6 @@ class Home extends Component {
       }
 
       for (const post of helper) {
-        console.log(post)
         const time = post.timestamp
         const ts = new Date(time)
 

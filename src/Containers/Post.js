@@ -1,16 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 
 // Dialog
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
-
-// Filter
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import IconButton from 'material-ui/IconButton';
 
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
@@ -36,7 +31,9 @@ class Post extends Component {
     this.state = {
       id: null,
       author: '',
-      body: ''
+      body: '',
+      open: false,
+      edit: null
     }
   }
 
@@ -51,10 +48,8 @@ class Post extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.comments === null) {
-      const parameters = { call: Globals.postComments, id: this.state.id }
-      this.props.loadContent(parameters)
-    }
+    const parameters = { call: Globals.postComments, id: this.state.id }
+    this.props.loadContent(parameters)
   }
 
   cleanPath = (path) => {
@@ -78,6 +73,8 @@ class Post extends Component {
               </ul>
               <p>{comment.body}</p>
             </div>
+            <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => this.editComment(comment)}/>
+            <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => this.removeComment(comment)}/>
           </div>
         )
       }
@@ -109,21 +106,85 @@ class Post extends Component {
       <div>
         <br />
         <TextField
+          hintText='Body'
+          fullWidth={true}
+          onChange={(event, value) => this.handleBody(value)}
+        /><br />
+        <TextField
+          hintText='Author'
+          fullWidth={true}
+          onChange={(event, value) => this.handleAuthor(value)}
+        /><br />
+        <FlatButton
+          label='Submit'
+          primary
+          onClick={this.handleSubmit}
+        />
+      </div>
+    )
+  }
+
+  editComment = (comment) => this.setState({open: true, edit: comment})
+  handleClose = () => this.setState({open: false})
+
+  handleSubmitEdit = () => {
+    const { edit, body } = this.state
+    if (body !== '') {
+      const comment = {
+        body,
+        timestamp: Date.now(),
+        id: edit.id
+      }
+      this.props.editComment(comment)
+      const parameters = { call: Globals.postComments, id: this.state.id }
+      this.props.loadContent(parameters)
+      this.handleClose()
+    }
+  }
+
+  removeComment = (comment) => {
+    this.props.deleteComment(comment.id)
+  }
+
+  editCommentDialog = () => {
+
+    const { edit } = this.state
+
+    if (edit === null) return <div />
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.handleSubmitEdit}
+      />,
+    ]
+
+    return (
+      <Dialog
+        title="Edit your comment"
+        actions={actions}
+        modal={false}
+        open={this.state.open}
+        onRequestClose={this.handleClose}>
+        <TextField
           hintText="Body"
+          defaultValue={edit.body}
           fullWidth={true}
           onChange={(event, value) => this.handleBody(value)}
         /><br />
         <TextField
           hintText="Author"
+          defaultValue={edit.author}
           fullWidth={true}
           onChange={(event, value) => this.handleAuthor(value)}
         /><br />
-        <FlatButton
-          label="Submit"
-          primary
-          onClick={this.handleSubmit}
-        />
-      </div>
+      </Dialog>
     )
   }
 
@@ -152,6 +213,8 @@ class Post extends Component {
                   <li><span><i className='glyphicon glyphicon-plane' />{detail.voteScore}</span></li>
                 </ul>
                 <p>{detail.body}</p>
+                <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {}} />
+                <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {}} />
                 </div>
               <div className='comments heading'>
                 <h3>Comments</h3>
@@ -163,6 +226,7 @@ class Post extends Component {
               </div>
             </div>
           </div>
+          { this.editCommentDialog() }
         </div>
       </div>
     )
@@ -189,7 +253,9 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     loadContent: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
-    uploadComment: (comment) => dispatch(UploadActions.uploadCommentRequest(comment))
+    uploadComment: (comment) => dispatch(UploadActions.uploadCommentRequest(comment)),
+    editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
+    deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id))
   }
 }
 
