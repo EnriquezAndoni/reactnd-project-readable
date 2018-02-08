@@ -10,15 +10,6 @@ export function * retrieve (api, { parameters }) {
   let response
 
   switch (parameters.call) {
-    case Globals.category:
-      response = yield call(api.getCategories)
-      break
-
-    case Globals.allPosts:
-      response = yield call(api.getAllPosts)
-      console.log(response)
-      break
-
     case Globals.post:
       response = yield call(api.getCategoryPosts, parameters.category)
       break
@@ -30,6 +21,8 @@ export function * retrieve (api, { parameters }) {
     case Globals.postComments:
       response = yield call(api.getPostComments, parameters.id)
       break
+    default:
+      break
   }
 
   if (response.ok) {
@@ -37,5 +30,16 @@ export function * retrieve (api, { parameters }) {
     yield put(RetrieveActions.retrieveSuccess())
   } else {
     yield put(RetrieveActions.retrieveFailure(response.problem))
+  }
+}
+
+export function * retrieveHome (api) {
+  const categories = yield call(api.getCategories)
+  const posts = yield call(api.getAllPosts)
+
+  if (categories.ok && posts.ok) {
+    yield put(RetrieveActions.retrieveHomeSuccess(categories.data, posts.data))
+  } else {
+    yield put(RetrieveActions.retrieveHomeFailure(categories.problem, posts.problem))
   }
 }

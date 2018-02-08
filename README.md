@@ -7,6 +7,13 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 - [Version Control Integration](#version-control-integration)
 - [Something Missing?](#something-missing?)
 
+## START
+To get started developing right away:
+
+* install all project dependencies with ```yarn install```
+* start the development server with ```yarn start```
+
+
 ## Folder Structure
 
 Your project should look like this:

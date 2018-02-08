@@ -1,198 +1,359 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
+// Dialog
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import TextField from 'material-ui/TextField'
+import IconButton from 'material-ui/IconButton'
+
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
+import UploadActions from '../Redux/UploadRedux'
+
+// Globals
+import Globals from '../Utils/Globals'
 
 // Style
-import './Styles/bootstrap.min.css'
-import './Styles/PostStyles.css'
-import Globals from "../Utils/Globals";
-import {Images} from "../Theme";
+import './Styles/bootstrap.css'
+import './Styles/style.css'
+
+// UIID
+const uuidv4 = require('uuid/v4')
 
 class Post extends Component {
-  /**
-   * @description Initialize the state
-   * @constructor
-   */
   constructor (props) {
     super(props)
     this.state = {
-      id: null
+      id: null,
+      author: '',
+      body: '',
+      open: false,
+      openC: false,
+      edit: null,
+      pTitle: '',
+      pAuthor: '',
+      pBody: '',
+      category: ''
     }
   }
 
   componentDidMount () {
-    // Coger id del path mirar si esta en el store y coger de ahi
-    // Si no peticion
-    const { posts, loadPost } = this.props
     let path = this.props.location.pathname
     let id = this.cleanPath(path)
-    this.setState({ id })
+    const parameters = { call: Globals.detail, id }
+    this.props.loadContent(parameters)
+    this.setState({id})
+  }
 
-    if (posts !== null) this.getPostFromProps(posts, id)
-    else {
-      const parameters = { call: Globals.detail, id }
-      loadPost(parameters)
-    }
+  componentWillReceiveProps (nextProps) {
+    const parameters = { call: Globals.postComments, id: this.state.id }
+    this.props.loadContent(parameters)
   }
 
   cleanPath = (path) => {
     let res = path.split('/')
+    this.setState({ category: res[1]})
     return res[2]
   }
 
-  getPostFromProps = (posts, id) => {
-    let BreakException = {}
-    try {
-      posts.forEach(post => {
-        if (post.id === id) {
-          this.setState({ post })
-          throw BreakException
-        }
-      })
-    } catch (e) {
-      if (e !== BreakException) throw e
-    }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.comments === null) {
-      const params = { call: Globals.postComments, id: this.state.id }
-      this.props.loadPost(params)
-    }
-  }
-
   renderComments = (comments) => {
-
-    // console.log('HEY')
-    console.log(comments)
-
-
-
-    let paint = []
-    if (comments === null) return paint
-    if (comments.length > 0) {
-      for (const comment of comments) {
+    let render = []
+    comments.forEach(comment => {
+      if (comment.deleted === false) {
         const time = comment.timestamp
         const ts = new Date(time)
-        paint.push(
-
-          <div className="col-lg-8 col-md-10 mx-auto" key={comment.id}>
-            <div className="panel panel-white post panel-shadow">
-              <div className="post-heading">
-                <div className="pull-left image">
-                  <img src="http://bootdey.com/img/Content/user_1.jpg" className="img-circle avatar" alt="user profile image" />
-                </div>
-                <div className="pull-left meta">
-                  <div className="title h5">
-                    <a href="#"><b>{comment.autho}</b></a>
-                  </div>
-                  <h6 className="text-muted time">{ts.toDateString()}</h6>
-                </div>
-              </div>
-              <div className="post-description">
-                <p>{comment.body}</p>
-                <div className="stats">
-                  <a href="#" className="btn btn-default stat-item">
-                    <i className="fa fa-thumbs-up icon"></i>{comment.voteScore}
-                  </a>
-                </div>
-              </div>
+        render.push(
+          <div className='media' key={comment.id}>
+            <div className='media-body'>
+              <h4 className='media-heading'>{comment.author}</h4>
+              <ul className='blog-ic'>
+                <li><span><i className='glyphicon glyphicon-time' />{ts.toDateString()}</span></li>
+                <li><span><i className='glyphicon glyphicon-plane' />{comment.voteScore}</span></li>
+              </ul>
+              <p>{comment.body}</p>
             </div>
+            <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => this.editComment(comment)}/>
+            <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => this.removeComment(comment)}/>
+            <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handleCommentPlusVote(comment, 'upVote')}}/>
+            <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handleCommentPlusVote(comment, 'downVote')}}/>
           </div>
         )
       }
-    }
+    })
 
-    return paint
-
+    return render
   }
 
-  /**
-   * @description Render the component
-   */
+  handleCommentPlusVote = (p, option) => {
+    const comment = {
+      id: p.id,
+      option
+    }
+    this.props.voteComment(comment)
+    const parameters = { call: Globals.postComments, id: this.state.id }
+    this.props.loadContent(parameters)
+  }
+
+  handleBody = (body) => this.setState({body})
+  handleAuthor = (author) => this.setState({author})
+  handleSubmit = () => {
+    const { author, body } = this.state
+    if (author !== '' && body !== '') {
+      const comment = {
+        author,
+        body,
+        parentId: this.state.id,
+        timestamp: Date.now(),
+        id: String(uuidv4())
+      }
+      this.props.uploadComment(comment)
+      const parameters = { call: Globals.postComments, id: this.state.id }
+      this.props.loadContent(parameters)
+    }
+  }
+
+  renderCommentDialog = () => {
+    return (
+      <div>
+        <br />
+        <TextField
+          hintText='Body'
+          fullWidth={true}
+          onChange={(event, value) => this.handleBody(value)}
+        /><br />
+        <TextField
+          hintText='Author'
+          fullWidth={true}
+          onChange={(event, value) => this.handleAuthor(value)}
+        /><br />
+        <FlatButton
+          label='Submit'
+          primary
+          onClick={this.handleSubmit}
+        />
+      </div>
+    )
+  }
+
+  editComment = (comment) => this.setState({openC: true, edit: comment})
+  handleCloseC = () => this.setState({openC: false})
+  handleClose = () => this.setState({open: false})
+
+  handleSubmitEdit = () => {
+    const { edit, body } = this.state
+    if (body !== '') {
+      const comment = {
+        body,
+        timestamp: Date.now(),
+        id: edit.id
+      }
+      this.props.editComment(comment)
+      const parameters = { call: Globals.postComments, id: this.state.id }
+      this.props.loadContent(parameters)
+      this.handleCloseC()
+    }
+  }
+
+  removeComment = (comment) => {
+    this.props.deleteComment(comment.id)
+  }
+
+  editCommentDialog = () => {
+
+    const { edit } = this.state
+
+    if (edit === null) return <div />
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.handleCloseC}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.handleSubmitEdit}
+      />,
+    ]
+
+    return (
+      <Dialog
+        title="Edit your comment"
+        actions={actions}
+        modal={false}
+        open={this.state.openC}
+        onRequestClose={this.handleCloseC}>
+        <TextField
+          hintText="Body"
+          defaultValue={edit.body}
+          fullWidth={true}
+          onChange={(event, value) => this.handleBody(value)}
+        /><br />
+        <TextField
+          hintText="Author"
+          defaultValue={edit.author}
+          fullWidth={true}
+          onChange={(event, value) => this.handleAuthor(value)}
+        /><br />
+      </Dialog>
+    )
+  }
+
+  handlePostTitle = (pTitle) => this.setState({pTitle})
+  handlePostBody = (pBody) => this.setState({pBody})
+
+  editPost = () => this.setState({open: true})
+  deletePost = () => {
+    const { detail } = this.props
+    this.props.deletePost(detail.id)
+    this.props.history.goBack()
+  }
+
+  handleSubmitEditPost = () => {
+    const { pBody, pTitle } = this.state
+    const { detail } = this.props
+
+    let body = pBody
+    let title = pTitle
+
+    if (body === '') body = detail.body
+    if (title === '') title = detail.title
+
+    if (body !== '' && title !== '') {
+      const post = {
+        title,
+        body,
+        id: detail.id
+      }
+      this.props.editPost(post)
+      const parameters = { call: Globals.detail, id: this.state.id }
+      this.props.loadContent(parameters)
+      this.handleClose()
+    }
+  }
+
+  editPostDialog = () => {
+
+    const { detail } = this.props
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.handleSubmitEditPost}
+      />,
+    ]
+
+    return (
+      <Dialog
+        title="Edit your post"
+        actions={actions}
+        modal={false}
+        open={this.state.open}
+        onRequestClose={this.handleClose}>
+        <TextField
+          hintText="Title"
+          defaultValue={detail.title}
+          fullWidth={true}
+          onChange={(event, value) => this.handlePostTitle(value)}
+        /><br />
+        <TextField
+          hintText="Body"
+          defaultValue={detail.body}
+          fullWidth={true}
+          onChange={(event, value) => this.handlePostBody(value)}
+        /><br />
+        <TextField
+          hintText="Author"
+          disabled
+          defaultValue={detail.author}
+          fullWidth={true}
+        /><br />
+      </Dialog>
+    )
+  }
+
+  handlePlusVote = (p, option) => {
+    const post = {
+      id: p.id,
+      option
+    }
+    this.props.votePost(post)
+    const parameters = { call: Globals.detail, id: this.state.id }
+    this.props.loadContent(parameters)
+  }
+
   render () {
+
     const { detail, comments } = this.props
 
-    if (detail !== null) {
-      const time = detail.timestamp
-      const ts = new Date(time)
-      return (
-        <div className='content'>
-          <header className='masthead'>
-            <div className='overlay' />
-          </header>
-          <div key={detail.id} className='container'>
-            <div className='row'>
-              <div className='col-lg-8 col-md-10 mx-auto'>
-                <div className='post-preview'>
-                  <h2 className='post-title'>{detail.title}</h2>
-                  <p className='post-meta'>Posted by *{detail.author}* on {ts.toDateString()} votes: {detail.voteScore}</p>
-                </div>
-                <hr />
-                <div className='selection'>
-                  {detail.body}
-                </div>
-                <hr />
 
-                <div className="row" >
-                  {this.renderComments(comments)}
-                </div>
+    if (detail === null || comments === null) return <div />
 
-                <div className="row">
+    const time = detail.timestamp
+    const ts = new Date(time)
 
-                  <div className="col-lg-8 col-md-10 mx-auto">
-                    <div className="widget-area no-padding blank">
-                      <div className="status-upload">
-                        <form>
-                          <textarea placeholder="Type your new comment" ></textarea>
-                          <button type="submit" className="btn btn-success green">Share</button>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+    return (
+      <div >
+        <div className='single'>
+          <div className='container'>
+            <div className='single-top'>
+              <div className=' single-grid'>
+                <h4>{detail.title}</h4>
+                <ul className='blog-ic'>
+                  <li><span> <i className='glyphicon glyphicon-user' />{detail.author}</span></li>
+                  <li><span><i className='glyphicon glyphicon-time' />{ts.toDateString()}</span></li>
+                  <li><span><i className='glyphicon glyphicon-plane' />{detail.voteScore}</span></li>
+                </ul>
+                <p>{detail.body}</p>
+                <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
+                <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost()}} />
+                <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(detail, 'upVote')}}/>
+                <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(detail, 'downVote')}}/>
+              </div>
+              <div className='comments heading'>
+                <h3>Comments</h3>
+                { this.renderComments(comments) }
+              </div>
+              <div className='comment-bottom heading'>
+                <h3>Leave a Comment</h3>
+                { this.renderCommentDialog() }
               </div>
             </div>
           </div>
+          { this.editPostDialog() }
+          { this.editCommentDialog() }
         </div>
-      )
-    }
-
-    return <div />
-
+      </div>
+    )
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} state - Store state
- * @returns {object}
- *  {import} categories: loaded categories
- */
 function mapStateToProps (state) {
   return {
-    posts: state.retrieve.posts,
     detail: state.retrieve.detail,
     comments: state.retrieve.comments
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} dispatch
- * @returns {object}
- *  {func} loadCategories: dispatch the retrieveAttempt reducer
- */
 function mapDispatchToProps (dispatch) {
   return {
-    loadPost: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters))
+    loadContent: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
+    uploadComment: (comment) => dispatch(UploadActions.uploadCommentRequest(comment)),
+    editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
+    deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id)),
+    editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
+    deletePost: (id) => dispatch(UploadActions.deletePostRequest(id)),
+    votePost: (post) => dispatch(UploadActions.votePostRequest(post)),
+    voteComment: (comment) => dispatch(UploadActions.voteCommentRequest(comment))
   }
 }
 
-/**
- * @description Connect mapStateToProps, mapDispatchToProps and the component
- */
 export default connect(mapStateToProps, mapDispatchToProps)(Post)

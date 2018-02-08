@@ -10,8 +10,8 @@ import { UploadTypes } from '../Redux/UploadRedux'
 /* ------------- Sagas ------------- */
 
 import { loadLanguage } from './I18nSagas'
-import { retrieve } from './RetrieveSagas'
-import { uploadContent } from './UploadSagas'
+import { retrieve, retrieveHome } from './RetrieveSagas'
+import { uploadContent, uploadComment, editComment, deleteComment, editPost, deletePost, votePost, voteComment } from './UploadSagas'
 
 /* ------------- API ------------- */
 
@@ -23,7 +23,15 @@ const api = API.create()
 export default function * root () {
   yield all([
     takeLatest(I18nTypes.ATTEMPT_I18N, loadLanguage),
+    takeLatest(RetrieveTypes.RETRIEVE_HOME_REQUEST, retrieveHome, api),
     takeLatest(RetrieveTypes.RETRIEVE_ATTEMPT, retrieve, api),
-    takeLatest(UploadTypes.UPLOAD_REQUEST, uploadContent, api)
+    takeLatest(UploadTypes.UPLOAD_REQUEST, uploadContent, api),
+    takeLatest(UploadTypes.UPLOAD_COMMENT_REQUEST, uploadComment, api),
+    takeLatest(UploadTypes.EDIT_COMMENT_REQUEST, editComment, api),
+    takeLatest(UploadTypes.DELETE_COMMENT_REQUEST, deleteComment, api),
+    takeLatest(UploadTypes.EDIT_POST_REQUEST, editPost, api),
+    takeLatest(UploadTypes.DELETE_POST_REQUEST, deletePost, api),
+    takeLatest(UploadTypes.VOTE_POST_REQUEST, votePost, api),
+    takeLatest(UploadTypes.VOTE_COMMENT_REQUEST, voteComment, api)
   ])
 }

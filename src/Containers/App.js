@@ -10,7 +10,7 @@ import { unpackCatalog } from 'lingui-i18n'
 import I18nActions from '../Redux/I18nRedux'
 
 // Components
-import Category from './Category'
+import Home from './Home'
 
 class App extends Component {
   /**
@@ -83,7 +83,7 @@ class App extends Component {
     return (
       <I18nProvider language={language} catalogs={catalogs}>
         <div>
-          <Category />
+          <Home />
         </div>
       </I18nProvider>
     )

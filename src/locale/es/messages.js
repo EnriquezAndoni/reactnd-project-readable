@@ -1,1 +1,1 @@
-module.exports={l:{"p":function(n,ord){if(ord)return"other";return n==1?"one":"other"}},m:{"Created":"Este proyecto es un template de React creado por","Welcome":"Bienvenido a React"}};
+module.exports={l:{"p":function(n,ord){if(ord)return"other";return n===1?"one":"other"}},m:{"Created":"Este proyecto es un template de React creado por","Welcome":"Bienvenido a React"}};

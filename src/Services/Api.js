@@ -2,14 +2,14 @@ import apisauce from 'apisauce'
 
 // Constructor
 const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
-  const token = Math.random().toString(36).substr(-8)
+  // const token = Math.random().toString(36).substr(-8)
 
   // Create and configure an apisauce-based api object.
   const api = apisauce.create({
     baseURL,
     headers: {
       'Accept': 'application/json',
-      'Authorization': token
+      'Authorization': 'token'
     },
     // 10 second timeout...
     timeout: 10000
@@ -30,9 +30,44 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
       id: post.id,
       timestamp: post.timestamp,
       title: post.title,
-      body: post.title,
+      body: post.body,
       author: post.author,
       category: post.category
+    }, {})
+
+  const uploadComment = (comment) => api.post('/comments',
+    {
+      id: comment.id,
+      timestamp: comment.timestamp,
+      body: comment.body,
+      author: comment.author,
+      parentId: comment.parentId
+    }, {})
+
+  const editComment = (comment) => api.put(`/comments/${comment.id}`,
+    {
+      timestamp: comment.timestamp,
+      body: comment.body
+    })
+
+  const deleteComment = (id) => api.delete(`/comments/${id}`)
+
+  const editPost = (post) => api.put(`/posts/${post.id}`,
+    {
+      title: post.title,
+      body: post.body
+    })
+
+  const deletePost = (id) => api.delete(`/posts/${id}`)
+
+  const votePost = (post) => api.post(`/posts/${post.id}`,
+    {
+      option: post.option
+    }, {})
+
+  const voteComment = (comment) => api.post(`/comments/${comment.id}`,
+    {
+      option: comment.option
     }, {})
 
   // A list of the API functions
@@ -42,7 +77,14 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
     getCategoryPosts,
     getPost,
     getPostComments,
-    uploadPost
+    uploadPost,
+    uploadComment,
+    editComment,
+    deleteComment,
+    editPost,
+    deletePost,
+    votePost,
+    voteComment
   }
 }
 

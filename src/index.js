@@ -10,7 +10,7 @@ import registerServiceWorker from './registerServiceWorker'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import App from './Containers/App'
-import PostList from './Containers/PostList'
+import Categories from './Containers/Categories'
 import Post from './Containers/Post'
 
 import './index.css'
@@ -31,7 +31,7 @@ ReactDOM.render(
       <MuiThemeProvider>
         <div>
           <Route exact path='/' component={App} />
-          <Route exact path='/:category' component={PostList} />
+          <Route exact path='/:category' component={Categories} />
           <Route exact path='/:category/:id' component={Post} />
         </div>
       </MuiThemeProvider>

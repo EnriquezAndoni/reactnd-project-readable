@@ -8,7 +8,11 @@ const { Types, Creators } = createActions({
   retrieveAttempt: ['parameters'],
   retrieveData: ['data'],
   retrieveSuccess: null,
-  retrieveFailure: ['error']
+  retrieveFailure: ['error'],
+
+  retrieveHomeRequest: null,
+  retrieveHomeSuccess: ['categories', 'allPosts'],
+  retrieveHomeFailure: ['e1', 'e2']
 })
 
 export const RetrieveTypes = Types
@@ -24,7 +28,9 @@ export const INITIAL_STATE = Immutable({
   posts: null,
   detail: null,
   comments: null,
-  error: null
+  error: null,
+  e1: null,
+  e2: null
 })
 
 /* ------------- Reducers ------------- */
@@ -50,6 +56,8 @@ export const retrieveData = (state, { data }) => {
     case Globals.postComments:
       newState = state.merge({ comments: data })
       break
+    default:
+      break
   }
   return newState
 }
@@ -58,11 +66,21 @@ export const retrieveSuccess = (state) => state.merge({loading: false, error: nu
 
 export const retrieveFailure = (state, { error }) => state.merge({loading: false, error})
 
+export const retrieveHomeRequest = (state) => state.merge({ loading: true })
+
+export const retrieveHomeSuccess = (state, { categories, allPosts }) => state.merge({loading: false, error: null, categories, allPosts})
+
+export const retrieveHomeFailure = (state, { e1, e2 }) => state.merge({loading: false, e1, e2})
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RETRIEVE_ATTEMPT]: retrieveAttempt,
   [Types.RETRIEVE_DATA]: retrieveData,
   [Types.RETRIEVE_SUCCESS]: retrieveSuccess,
-  [Types.RETRIEVE_FAILURE]: retrieveFailure
+  [Types.RETRIEVE_FAILURE]: retrieveFailure,
+
+  [Types.RETRIEVE_HOME_REQUEST]: retrieveHomeRequest,
+  [Types.RETRIEVE_HOME_SUCCESS]: retrieveHomeSuccess,
+  [Types.RETRIEVE_HOME_FAILURE]: retrieveHomeFailure
 })
