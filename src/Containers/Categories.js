@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import IconButton from 'material-ui/IconButton'
+
 // Dialog
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
@@ -77,8 +79,12 @@ class Categories extends Component {
                   <Link to={`${this.state.category}/${post.id}`}>
                     <h3>{post.title}</h3>
                   </Link>
-                  <p>{post.body}</p>
-                  <label>{ts.toDateString()} - Comments: {post.commentCount} - Votes: {post.voteScore}</label>
+                  <p>{ts.toDateString()} - Comments: {post.commentCount}</p>
+                  <label>
+                    Votes: {post.voteScore}
+                    <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(post, 'upVote')}}/>
+                    <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(post, 'downVote')}}/>
+                  </label>
                 </div>
               </div>
             </div>
@@ -87,6 +93,17 @@ class Categories extends Component {
       }
     }
     return render
+  }
+
+
+  handlePlusVote = (p, option) => {
+    const post = {
+      id: p.id,
+      option
+    }
+    this.props.votePost(post)
+    const parameters = { call: Globals.post, category: this.state.category }
+    this.props.loadPosts(parameters)
   }
 
   handleOpen = () => this.setState({open: true})
@@ -204,7 +221,8 @@ function mapStateToProps (state) {
 function mapDispatchToProps (dispatch) {
   return {
     loadPosts: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
-    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post))
+    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post)),
+    votePost: (post) => dispatch(UploadActions.votePostRequest(post))
   }
 }
 

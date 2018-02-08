@@ -29,6 +29,7 @@ class Post extends Component {
       author: '',
       body: '',
       open: false,
+      openC: false,
       edit: null,
       pTitle: '',
       pAuthor: '',
@@ -74,12 +75,24 @@ class Post extends Component {
             </div>
             <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => this.editComment(comment)}/>
             <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => this.removeComment(comment)}/>
+            <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handleCommentPlusVote(comment, 'upVote')}}/>
+            <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handleCommentPlusVote(comment, 'downVote')}}/>
           </div>
         )
       }
     })
 
     return render
+  }
+
+  handleCommentPlusVote = (p, option) => {
+    const comment = {
+      id: p.id,
+      option
+    }
+    this.props.voteComment(comment)
+    const parameters = { call: Globals.postComments, id: this.state.id }
+    this.props.loadContent(parameters)
   }
 
   handleBody = (body) => this.setState({body})
@@ -123,7 +136,8 @@ class Post extends Component {
     )
   }
 
-  editComment = (comment) => this.setState({open: true, edit: comment})
+  editComment = (comment) => this.setState({openC: true, edit: comment})
+  handleCloseC = () => this.setState({openC: false})
   handleClose = () => this.setState({open: false})
 
   handleSubmitEdit = () => {
@@ -137,7 +151,7 @@ class Post extends Component {
       this.props.editComment(comment)
       const parameters = { call: Globals.postComments, id: this.state.id }
       this.props.loadContent(parameters)
-      this.handleClose()
+      this.handleCloseC()
     }
   }
 
@@ -155,7 +169,7 @@ class Post extends Component {
       <FlatButton
         label="Cancel"
         primary
-        onClick={this.handleClose}
+        onClick={this.handleCloseC}
       />,
       <FlatButton
         label="Submit"
@@ -169,8 +183,8 @@ class Post extends Component {
         title="Edit your comment"
         actions={actions}
         modal={false}
-        open={this.state.open}
-        onRequestClose={this.handleClose}>
+        open={this.state.openC}
+        onRequestClose={this.handleCloseC}>
         <TextField
           hintText="Body"
           defaultValue={edit.body}
@@ -266,6 +280,16 @@ class Post extends Component {
     )
   }
 
+  handlePlusVote = (p, option) => {
+    const post = {
+      id: p.id,
+      option
+    }
+    this.props.votePost(post)
+    const parameters = { call: Globals.detail, id: this.state.id }
+    this.props.loadContent(parameters)
+  }
+
   render () {
 
     const { detail, comments } = this.props
@@ -291,7 +315,9 @@ class Post extends Component {
                 <p>{detail.body}</p>
                 <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
                 <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost()}} />
-                </div>
+                <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(detail, 'upVote')}}/>
+                <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(detail, 'downVote')}}/>
+              </div>
               <div className='comments heading'>
                 <h3>Comments</h3>
                 { this.renderComments(comments) }
@@ -324,7 +350,9 @@ function mapDispatchToProps (dispatch) {
     editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
     deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id)),
     editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
-    deletePost: (id) => dispatch(UploadActions.deletePostRequest(id))
+    deletePost: (id) => dispatch(UploadActions.deletePostRequest(id)),
+    votePost: (post) => dispatch(UploadActions.votePostRequest(post)),
+    voteComment: (comment) => dispatch(UploadActions.voteCommentRequest(comment))
   }
 }
 

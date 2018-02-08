@@ -21,7 +21,13 @@ const { Types, Creators } = createActions({
   editPostFailure: ['error'],
   deletePostRequest: ['id'],
   deletePostSuccess: null,
-  deletePostFailure: ['error']
+  deletePostFailure: ['error'],
+  votePostRequest: ['post'],
+  votePostSuccess: null,
+  votePostFailure: ['error'],
+  voteCommentRequest: ['comment'],
+  voteCommentSuccess: null,
+  voteCommentFailure: ['error']
 })
 
 export const UploadTypes = Types
@@ -72,6 +78,18 @@ export const deletePostSuccess = (state) => state.merge({ fetching: false, error
 
 export const deletePostFailure = (state, { error }) => state.merge({ fetching: false, error })
 
+export const votePostRequest = (state) => state.merge({ fetching: true })
+
+export const votePostSuccess = (state) => state.merge({ fetching: false, error: null })
+
+export const votePostFailure = (state, { error }) => state.merge({ fetching: false, error })
+
+export const voteCommentRequest = (state) => state.merge({ fetching: true })
+
+export const voteCommentSuccess = (state) => state.merge({ fetching: false, error: null })
+
+export const voteCommentFailure = (state, { error }) => state.merge({ fetching: false, error })
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -92,5 +110,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.EDIT_POST_FAILURE]: editPostFailure,
   [Types.DELETE_POST_REQUEST]: deletePostRequest,
   [Types.DELETE_POST_SUCCESS]: deletePostSuccess,
-  [Types.DELETE_POST_FAILURE]: deletePostFailure
+  [Types.DELETE_POST_FAILURE]: deletePostFailure,
+  [Types.VOTE_POST_REQUEST]: votePostRequest,
+  [Types.VOTE_POST_SUCCESS]: votePostSuccess,
+  [Types.VOTE_POST_FAILURE]: votePostFailure,
+  [Types.VOTE_COMMENT_REQUEST]: voteCommentRequest,
+  [Types.VOTE_COMMENT_SUCCESS]: voteCommentSuccess,
+  [Types.VOTE_COMMENT_FAILURE]: voteCommentFailure
 })

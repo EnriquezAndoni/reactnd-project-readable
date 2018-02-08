@@ -60,3 +60,23 @@ export function * deletePost (api, { id }) {
     yield put(UploadActions.deletePostFailure(response.problem))
   }
 }
+
+export function * votePost (api, { post }) {
+  const response = yield call(api.votePost, post)
+
+  if (response.ok) {
+    yield put(UploadActions.votePostSuccess())
+  } else {
+    yield put(UploadActions.votePostFailure(response.problem))
+  }
+}
+
+export function * voteComment (api, { comment }) {
+  const response = yield call(api.voteComment, comment)
+
+  if (response.ok) {
+    yield put(UploadActions.voteCommentSuccess())
+  } else {
+    yield put(UploadActions.voteCommentFailure(response.problem))
+  }
+}
