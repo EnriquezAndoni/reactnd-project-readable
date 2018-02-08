@@ -44,10 +44,8 @@ class Categories extends Component {
   }
 
   componentDidMount () {
-    if (this.props.posts === null) {
-      const parameters = { call: Globals.post, category: this.state.category }
-      this.props.loadPosts(parameters)
-    }
+    const parameters = { call: Globals.post, category: this.state.category }
+    this.props.loadPosts(parameters)
   }
 
   handleChangeFilter = (event, index, value) => this.setState({filter: value})

@@ -50,3 +50,13 @@ export function * editPost (api, { post }) {
     yield put(UploadActions.editCommentFailure(response.problem))
   }
 }
+
+export function * deletePost (api, { id }) {
+  const response = yield call(api.deletePost, id)
+
+  if (response.ok) {
+    yield put(UploadActions.deletePostSuccess())
+  } else {
+    yield put(UploadActions.deletePostFailure(response.problem))
+  }
+}

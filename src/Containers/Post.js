@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
-import IconButton from 'material-ui/IconButton';
+import IconButton from 'material-ui/IconButton'
 
 // Actions
 import RetrieveActions from '../Redux/RetrieveRedux'
@@ -37,17 +37,16 @@ class Post extends Component {
       pTitle: '',
       pAuthor: '',
       pBody: '',
+      category: ''
     }
   }
 
   componentDidMount () {
-    if (this.props.detail === null) {
-      let path = this.props.location.pathname
-      let id = this.cleanPath(path)
-      const parameters = { call: Globals.detail, id }
-      this.props.loadContent(parameters)
-      this.setState({id})
-    }
+    let path = this.props.location.pathname
+    let id = this.cleanPath(path)
+    const parameters = { call: Globals.detail, id }
+    this.props.loadContent(parameters)
+    this.setState({id})
   }
 
   componentWillReceiveProps (nextProps) {
@@ -57,6 +56,7 @@ class Post extends Component {
 
   cleanPath = (path) => {
     let res = path.split('/')
+    this.setState({ category: res[1]})
     return res[2]
   }
 
@@ -195,7 +195,11 @@ class Post extends Component {
   handlePostBody = (pBody) => this.setState({pBody})
 
   editPost = () => this.setState({open: true})
-
+  deletePost = () => {
+    const { detail } = this.props
+    this.props.deletePost(detail.id)
+    this.props.history.goBack()
+  }
 
   handleSubmitEditPost = () => {
     const { pBody, pTitle } = this.state
@@ -273,6 +277,7 @@ class Post extends Component {
 
     const { detail, comments } = this.props
 
+
     if (detail === null || comments === null) return <div />
 
     const time = detail.timestamp
@@ -292,7 +297,7 @@ class Post extends Component {
                 </ul>
                 <p>{detail.body}</p>
                 <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
-                <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {}} />
+                <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost()}} />
                 </div>
               <div className='comments heading'>
                 <h3>Comments</h3>
@@ -336,6 +341,7 @@ function mapDispatchToProps (dispatch) {
     editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
     deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id)),
     editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
+    deletePost: (id) => dispatch(UploadActions.deletePostRequest(id))
   }
 }
 

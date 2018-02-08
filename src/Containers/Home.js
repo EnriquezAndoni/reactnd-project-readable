@@ -41,7 +41,7 @@ class Home extends Component {
   }
 
   componentDidMount () {
-    if (this.props.categories === null) this.props.retrieveHome()
+    this.props.retrieveHome()
   }
 
   renderCategories = (categories) => {
