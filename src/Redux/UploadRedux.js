@@ -15,7 +15,10 @@ const { Types, Creators } = createActions({
   editCommentFailure: ['error'],
   deleteCommentRequest: ['id'],
   deleteCommentSuccess: null,
-  deleteCommentFailure: ['error']
+  deleteCommentFailure: ['error'],
+  editPostRequest: ['post'],
+  editPostSuccess: null,
+  editPostFailure: ['error']
 })
 
 export const UploadTypes = Types
@@ -54,6 +57,12 @@ export const deleteCommentSuccess = (state) => state.merge({ fetching: false, er
 
 export const deleteCommentFailure = (state, { error }) => state.merge({ fetching: false, error })
 
+export const editPostRequest = (state) => state.merge({ fetching: true })
+
+export const editPostSuccess = (state) => state.merge({ fetching: false, error: null })
+
+export const editPostFailure = (state, { error }) => state.merge({ fetching: false, error })
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -68,5 +77,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.EDIT_COMMENT_FAILURE]: editCommentFailure,
   [Types.DELETE_COMMENT_REQUEST]: deleteCommentRequest,
   [Types.DELETE_COMMENT_SUCCESS]: deleteCommentSuccess,
-  [Types.DELETE_COMMENT_FAILURE]: deleteCommentFailure
+  [Types.DELETE_COMMENT_FAILURE]: deleteCommentFailure,
+  [Types.EDIT_POST_REQUEST]: editPostRequest,
+  [Types.EDIT_POST_SUCCESS]: editPostSuccess,
+  [Types.EDIT_POST_FAILURE]: editPostFailure
 })

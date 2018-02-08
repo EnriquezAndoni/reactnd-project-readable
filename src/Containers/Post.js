@@ -33,7 +33,10 @@ class Post extends Component {
       author: '',
       body: '',
       open: false,
-      edit: null
+      edit: null,
+      pTitle: '',
+      pAuthor: '',
+      pBody: '',
     }
   }
 
@@ -188,6 +191,81 @@ class Post extends Component {
     )
   }
 
+  handlePostTitle = (pTitle) => this.setState({pTitle})
+  handlePostBody = (pBody) => this.setState({pBody})
+
+  editPost = () => this.setState({open: true})
+
+
+  handleSubmitEditPost = () => {
+    const { pBody, pTitle } = this.state
+    const { detail } = this.props
+
+    let body = pBody
+    let title = pTitle
+
+    if (body === '') body = detail.body
+    if (title === '') title = detail.title
+
+    if (body !== '' && title !== '') {
+      const post = {
+        title,
+        body,
+        id: detail.id
+      }
+      this.props.editPost(post)
+      const parameters = { call: Globals.detail, id: this.state.id }
+      this.props.loadContent(parameters)
+      this.handleClose()
+    }
+  }
+
+  editPostDialog = () => {
+
+    const { detail } = this.props
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.handleSubmitEditPost}
+      />,
+    ]
+
+    return (
+      <Dialog
+        title="Edit your post"
+        actions={actions}
+        modal={false}
+        open={this.state.open}
+        onRequestClose={this.handleClose}>
+        <TextField
+          hintText="Title"
+          defaultValue={detail.title}
+          fullWidth={true}
+          onChange={(event, value) => this.handlePostTitle(value)}
+        /><br />
+        <TextField
+          hintText="Body"
+          defaultValue={detail.body}
+          fullWidth={true}
+          onChange={(event, value) => this.handlePostBody(value)}
+        /><br />
+        <TextField
+          hintText="Author"
+          disabled
+          defaultValue={detail.author}
+          fullWidth={true}
+        /><br />
+      </Dialog>
+    )
+  }
+
   /**
    * @description Render the component
    */
@@ -213,7 +291,7 @@ class Post extends Component {
                   <li><span><i className='glyphicon glyphicon-plane' />{detail.voteScore}</span></li>
                 </ul>
                 <p>{detail.body}</p>
-                <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {}} />
+                <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost()}} />
                 <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {}} />
                 </div>
               <div className='comments heading'>
@@ -226,6 +304,7 @@ class Post extends Component {
               </div>
             </div>
           </div>
+          { this.editPostDialog() }
           { this.editCommentDialog() }
         </div>
       </div>
@@ -255,7 +334,8 @@ function mapDispatchToProps (dispatch) {
     loadContent: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
     uploadComment: (comment) => dispatch(UploadActions.uploadCommentRequest(comment)),
     editComment: (comment) => dispatch(UploadActions.editCommentRequest(comment)),
-    deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id))
+    deleteComment: (id) => dispatch(UploadActions.deleteCommentRequest(id)),
+    editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
   }
 }
 

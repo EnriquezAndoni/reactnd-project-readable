@@ -52,6 +52,12 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
 
   const deleteComment = (id) => api.delete(`/comments/${id}`)
 
+  const editPost = (post) => api.put(`/posts/${post.id}`,
+    {
+      title: post.title,
+      body: post.body
+    })
+
   // A list of the API functions
   return {
     getCategories,
@@ -62,7 +68,8 @@ const create = (baseURL = process.env.REACT_APP_BASE_URL) => {
     uploadPost,
     uploadComment,
     editComment,
-    deleteComment
+    deleteComment,
+    editPost
   }
 }
 
