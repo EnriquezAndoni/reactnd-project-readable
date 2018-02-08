@@ -24,10 +24,6 @@ import './Styles/style.css'
 const uuidv4 = require('uuid/v4')
 
 class Home extends Component {
-    /**
-     * @description Initialize the state
-     * @constructor
-     */
   constructor (props) {
     super(props)
     this.state = {
@@ -183,7 +179,6 @@ class Home extends Component {
     )
   }
 
-
   renderCategoriesMenu = (categories) => {
     let render = []
     if (categories !== null) {
@@ -196,9 +191,6 @@ class Home extends Component {
     return render
   }
 
-    /**
-     * @description Render the component
-     */
   render () {
     const { filter } = this.state
     const { categories, allPosts } = this.props
@@ -241,12 +233,6 @@ class Home extends Component {
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} state - Store state
- * @returns {object}
- *  {import} categories: loaded categories
- */
 function mapStateToProps (state) {
   return {
     categories: state.retrieve.categories,
@@ -254,13 +240,6 @@ function mapStateToProps (state) {
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} dispatch
- * @returns {object}
- *  {func} retrieveHome: dispatch the retrieveHomeRequest action
- *  {func} uploadPost: dispatch the uploadRequest action
- */
 function mapDispatchToProps (dispatch) {
   return {
     retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest()),
@@ -268,7 +247,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-/**
- * @description Connect mapStateToProps, mapDispatchToProps and the component
- */
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

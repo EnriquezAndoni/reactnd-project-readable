@@ -22,10 +22,6 @@ import './Styles/style.css'
 const uuidv4 = require('uuid/v4')
 
 class Post extends Component {
-  /**
-   * @description Initialize the state
-   * @constructor
-   */
   constructor (props) {
     super(props)
     this.state = {
@@ -270,9 +266,6 @@ class Post extends Component {
     )
   }
 
-  /**
-   * @description Render the component
-   */
   render () {
 
     const { detail, comments } = this.props
@@ -317,11 +310,6 @@ class Post extends Component {
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} state - Store state
- * @returns {object}
- */
 function mapStateToProps (state) {
   return {
     detail: state.retrieve.detail,
@@ -329,11 +317,6 @@ function mapStateToProps (state) {
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} dispatch
- * @returns {object}
- */
 function mapDispatchToProps (dispatch) {
   return {
     loadContent: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
@@ -345,7 +328,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-/**
- * @description Connect mapStateToProps, mapDispatchToProps and the component
- */
 export default connect(mapStateToProps, mapDispatchToProps)(Post)

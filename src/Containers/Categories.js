@@ -27,10 +27,6 @@ import './Styles/style.css'
 const uuidv4 = require('uuid/v4')
 
 class Categories extends Component {
-  /**
-   * @description Initialize the state
-   * @constructor
-   */
   constructor (props) {
     super(props)
     this.state = {
@@ -161,9 +157,6 @@ class Categories extends Component {
     )
   }
 
-  /**
-   * @description Render the component
-   */
   render () {
     const { filter, category } = this.state
     const { posts } = this.props
@@ -202,25 +195,12 @@ class Categories extends Component {
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} state - Store state
- * @returns {object}
- *  {import} categories: loaded categories
- */
 function mapStateToProps (state) {
   return {
     posts: state.retrieve.posts
   }
 }
 
-/**
- * @description Get the props from the store state
- * @param {object} dispatch
- * @returns {object}
- *  {func} retrieveHome: dispatch the retrieveHomeRequest action
- *  {func} uploadPost: dispatch the uploadRequest action
- */
 function mapDispatchToProps (dispatch) {
   return {
     loadPosts: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
@@ -228,7 +208,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-/**
- * @description Connect mapStateToProps, mapDispatchToProps and the component
- */
 export default connect(mapStateToProps, mapDispatchToProps)(Categories)
