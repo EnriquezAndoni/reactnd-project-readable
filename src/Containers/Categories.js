@@ -82,7 +82,7 @@ class Categories extends Component {
                     <h3>{post.title}</h3>
                   </Link>
                   <p>{post.body}</p>
-                  <label>{ts.toDateString()} - Votes: {post.voteScore}</label>
+                  <label>{ts.toDateString()} - Comments: {post.commentCount} - Votes: {post.voteScore}</label>
                 </div>
               </div>
             </div>

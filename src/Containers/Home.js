@@ -88,7 +88,6 @@ class Home extends Component {
       for (const post of helper) {
         const time = post.timestamp
         const ts = new Date(time)
-
         if (post.deleted === false) {
           render.push(
             <div className='about-tre' key={post.id}>
@@ -97,7 +96,7 @@ class Home extends Component {
                   <h6>{post.category}</h6>
                   <h3>{post.title}</h3>
                   <p>{post.body}</p>
-                  <label>{ts.toDateString()} - Votes: {post.voteScore}</label>
+                  <label>{ts.toDateString()} - Comments: {post.commentCount}  - Votes: {post.voteScore}</label>
                 </div>
               </div>
             </div>
