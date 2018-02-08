@@ -10,15 +10,6 @@ export function * retrieve (api, { parameters }) {
   let response
 
   switch (parameters.call) {
-    case Globals.category:
-      response = yield call(api.getCategories)
-      break
-
-    case Globals.allPosts:
-      response = yield call(api.getAllPosts)
-      console.log(response)
-      break
-
     case Globals.post:
       response = yield call(api.getCategoryPosts, parameters.category)
       break

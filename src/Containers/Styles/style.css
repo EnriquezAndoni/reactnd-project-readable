@@ -234,7 +234,7 @@ ul.navig li a.active{
 /*--Header-Ends--*/
 /*--banner-starts--*/
 .banner-top{
-	min-height:600px;
+	min-height:200px;
 	background-size:cover;
 	-webkit-background-size:cover;
 	-moz-background-size:cover;
@@ -897,7 +897,7 @@ h3.ghj {
 	color: #999;
 	line-height: 1.8em;
 	margin: 1% auto;
-	width: 85%;
+	width: 60%;
 }
 .welcome-bottom img{
 	margin-bottom:10px;
@@ -1049,7 +1049,7 @@ ul.blog-ic {
 }
 @media (max-width:1280px){
 .banner-top {
-    min-height: 560px;
+    min-height: 160px;
 }
 .contact-bottom {
     margin-top: 3%;
@@ -1129,7 +1129,7 @@ ul.navig {
     left: 34.2%;
 }
 .banner-top {
-    min-height: 500px;
+    min-height: 100px;
 }
 .about-one p {
     width: 100%;
@@ -1307,7 +1307,7 @@ ul.navig li a {
     left: 33.2%;
 }
 .banner-top {
-    min-height: 390px;
+    min-height: 190px;
 }
 .about {
     padding: 3em 0px;

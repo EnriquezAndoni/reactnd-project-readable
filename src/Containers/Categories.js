@@ -16,6 +16,9 @@ import MenuItem from 'material-ui/MenuItem'
 import RetrieveActions from '../Redux/RetrieveRedux'
 import UploadActions from '../Redux/UploadRedux'
 
+// Globals
+import Globals from '../Utils/Globals'
+
 // Style
 import './Styles/bootstrap.css'
 import './Styles/style.css'
@@ -23,11 +26,11 @@ import './Styles/style.css'
 // UIID
 const uuidv4 = require('uuid/v4')
 
-class Home extends Component {
-    /**
-     * @description Initialize the state
-     * @constructor
-     */
+class Categories extends Component {
+  /**
+   * @description Initialize the state
+   * @constructor
+   */
   constructor (props) {
     super(props)
     this.state = {
@@ -36,33 +39,20 @@ class Home extends Component {
       select: null,
       author: '',
       title: '',
-      body: ''
+      body: '',
+      category: props.match.params.category
     }
   }
 
   componentDidMount () {
-    if (this.props.categories === null) this.props.retrieveHome()
+    if (this.props.posts === null) {
+      const parameters = { call: Globals.post, category: this.state.category }
+      this.props.loadPosts(parameters)
+    }
   }
 
-  renderCategories = (categories) => {
-    let render = []
-    if (categories !== null) {
-      categories.categories.forEach(category => {
-        render.push(
-          <div className='might-grid' key={category.name}>
-            <div className='might-top'>
-              <Link to={category.path}>
-                <h4><a>{category.name}</a></h4>
-              </Link>
-              <p>Find the best post related to this category.</p>
-            </div>
-            <div className='clearfix' />
-          </div>
-        )
-      })
-    }
-
-    return render
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.categories === null) this.props.retrieveHome()
   }
 
   handleChangeFilter = (event, index, value) => this.setState({filter: value})
@@ -128,7 +118,8 @@ class Home extends Component {
       }
       this.props.uploadPost(post)
       this.handleClose()
-      this.props.retrieveHome()
+      const parameters = { call: Globals.post, category: this.state.category }
+      this.props.loadPosts(parameters)
     }
   }
 
@@ -198,12 +189,12 @@ class Home extends Component {
     return render
   }
 
-    /**
-     * @description Render the component
-     */
+  /**
+   * @description Render the component
+   */
   render () {
-    const { filter } = this.state
-    const { categories, allPosts } = this.props
+    const { filter, category } = this.state
+    const { categories, posts } = this.props
 
     return (
       <div className='about'>
@@ -211,8 +202,8 @@ class Home extends Component {
           <div className='about-main'>
             <div className='col-md-8 about-left'>
               <div className='about-one'>
-                <p>Best</p>
-                <h3>Posts</h3>
+                <p>Posts</p>
+                <h3>{category}</h3>
                 <div className="about-tre">
                   <SelectField
                     floatingLabelText="Post filter"
@@ -222,17 +213,13 @@ class Home extends Component {
                     <MenuItem value={'date'} primaryText={'Order by date'} />
                     <MenuItem value={'votes'} primaryText={'Order by votes'} />
                   </SelectField>
-                  { this.renderPost(allPosts) }
+                  { this.renderPost(posts) }
                 </div>
               </div>
             </div>
             <div className='col-md-4 about-right heading'>
               <div className='abt-2'>
-                <h3>BEST CATEGORIES</h3>
-                { this.renderCategories(categories) }
-              </div>
-              <div className='abt-2'>
-              { this.renderDialog(categories) }
+                { this.renderDialog(categories) }
               </div>
             </div>
             <div className='clearfix' />
@@ -252,7 +239,7 @@ class Home extends Component {
 function mapStateToProps (state) {
   return {
     categories: state.retrieve.categories,
-    allPosts: state.retrieve.allPosts
+    posts: state.retrieve.posts
   }
 }
 
@@ -265,12 +252,13 @@ function mapStateToProps (state) {
  */
 function mapDispatchToProps (dispatch) {
   return {
-    retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest()),
-    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post))
+    loadPosts: (parameters) => dispatch(RetrieveActions.retrieveAttempt(parameters)),
+    uploadPost: (post) => dispatch(UploadActions.uploadRequest(post)),
+    retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest())
   }
 }
 
 /**
  * @description Connect mapStateToProps, mapDispatchToProps and the component
  */
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Categories)
