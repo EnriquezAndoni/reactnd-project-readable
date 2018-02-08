@@ -300,8 +300,7 @@ ul.navig li a.active{
 .about-one p{
 	color:#999;
 	font-size:14px;
-	border-bottom:1px solid #999;
-	width:13%;
+	width:100%;
 	margin:0 auto;
 	font-family: 'Raleway-Regular';
 }
@@ -387,7 +386,7 @@ ul.navig li a.active{
 	margin: 6% 0 0 0;
 }
 .abt-left h3{
-	font-size: 23px;
+	font-size: 18px;
 	margin: 10px 0 0 0;
 	color: #212121;
 }
@@ -1133,7 +1132,7 @@ ul.navig {
     min-height: 500px;
 }
 .about-one p {
-    width: 17%;
+    width: 100%;
 }
 .heading h3,h3.ghj{
     padding: 9px 0px;
@@ -1516,7 +1515,7 @@ ul.navig {
     padding: 2.5em 0px;
 }
 .about-one p {
-    width: 16.5%;
+    width: 100%;
     font-size: 13px;
 }
 .about-one h3 {
@@ -1701,7 +1700,7 @@ ul.navig {
     min-height: 250px;
 }
 .about-one p {
-    width: 22%;
+    width: 100%;
 }
 .about-one h3 {
     font-size: 20px;
@@ -1744,7 +1743,7 @@ h2.head {
     right: 47.7%;
 }
 .about-one p {
-    width: 27%;
+    width: 100%;
 }
 .abt-left h6 {
     width: 52.5%;
@@ -1756,7 +1755,7 @@ h2.head {
     right: 50.7%;
 }
 .about-one p {
-    width: 29%;
+    width: 100%;
 }
 .abt-left h6 {
     width: 58.5%;
@@ -1890,7 +1889,7 @@ ul.navig {
     padding: 1.5em 0px;
 }
 .about-one p {
-    width: 35%;
+    width: 100%;
     font-size: 12px;
 }
 .about-one h3 {
