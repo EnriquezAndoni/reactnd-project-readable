@@ -44,14 +44,12 @@ class Post extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.detail === null) {
-      const id = this.props.match.params.id
-      for (let post of nextProps.posts) {
-        if (post.id === id) {
-          this.props.loadContent(id)
-          this.setState({id})
-          break
-        }
+    const id = this.props.match.params.id
+    for (let post of nextProps.posts) {
+      if (post.id === id) {
+        this.props.loadContent(id)
+        this.setState({id})
+        break
       }
     }
   }
@@ -120,7 +118,6 @@ class Post extends Component {
         /><br />
         <TextField
           hintText='Author'
-          disabled
           fullWidth={true}
           onChange={(event, value) => this.handleAuthor(value)}
         /><br />
@@ -153,6 +150,7 @@ class Post extends Component {
 
   removeComment = (comment) => {
     this.props.deleteComment(comment.id)
+    this.props.loadContent(this.state.id)
   }
 
   editCommentDialog = () => {
@@ -190,6 +188,7 @@ class Post extends Component {
         <TextField
           hintText="Author"
           defaultValue={edit.author}
+          disabled
           fullWidth={true}
           onChange={(event, value) => this.handleAuthor(value)}
         /><br />

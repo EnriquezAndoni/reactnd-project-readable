@@ -23,7 +23,7 @@ import './Styles/bootstrap.css'
 import './Styles/style.css'
 
 // UIID
-const uuidv4 = require('uuid/v4')
+import uuidv4 from 'uuid/v4'
 
 class Home extends Component {
   constructor (props) {
@@ -34,7 +34,11 @@ class Home extends Component {
       select: null,
       author: '',
       title: '',
-      body: ''
+      body: '',
+      post: null,
+      edit: false,
+      pTitle: '',
+      pBody: ''
     }
   }
 
@@ -61,6 +65,85 @@ class Home extends Component {
     }
 
     return render
+  }
+
+  editPost = (post) => this.setState({edit: true, post})
+  closeEdit = () => this.setState({edit: false})
+  deletePost = (post) => {
+    this.props.deletePost(post.id)
+    this.props.retrieveHome()
+  }
+
+  handlePostTitle = (pTitle) => this.setState({pTitle})
+  handlePostBody = (pBody) => this.setState({pBody})
+
+  handleSubmitEditPost = () => {
+    const { pBody, pTitle, post } = this.state
+
+    let body = pBody
+    let title = pTitle
+
+    if (body === '') body = post.body
+    if (title === '') title = post.title
+
+    if (body !== '' && title !== '') {
+      const p = {
+        title,
+        body,
+        id: post.id
+      }
+      this.props.editPost(p)
+      this.props.retrieveHome()
+      this.closeEdit()
+    }
+  }
+
+  editPostDialog = () => {
+
+    const { post } = this.state
+
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        primary
+        onClick={this.closeEdit}
+      />,
+      <FlatButton
+        label="Submit"
+        primary
+        onClick={this.handleSubmitEditPost}
+      />,
+    ]
+
+    if (post !== null) {
+      return (
+        <Dialog
+          title="Edit your post"
+          actions={actions}
+          modal={false}
+          open={this.state.edit}
+          onRequestClose={this.handleClose}>
+          <TextField
+            hintText="Title"
+            defaultValue={post.title}
+            fullWidth={true}
+            onChange={(event, value) => this.handlePostTitle(value)}
+          /><br />
+          <TextField
+            hintText="Body"
+            defaultValue={post.body}
+            fullWidth={true}
+            onChange={(event, value) => this.handlePostBody(value)}
+          /><br />
+          <TextField
+            hintText="Author"
+            disabled
+            defaultValue={post.author}
+            fullWidth={true}
+          /><br />
+        </Dialog>
+      )
+    } else return null
   }
 
   handleChangeFilter = (event, index, value) => this.setState({filter: value})
@@ -94,9 +177,11 @@ class Home extends Component {
                   <h6>{post.category}</h6>
                   <h3>{post.title}</h3>
                   <p>{post.body}</p>
-                  <p>{ts.toDateString()} - Comments: {post.commentCount}</p>
+                  <p>{post.author} - {ts.toDateString()} - Comments: {post.commentCount}</p>
                   <label>
                     Votes: {post.voteScore}
+                    <IconButton iconClassName='glyphicon glyphicon-edit' onClick={() => {this.editPost(post)}} />
+                    <IconButton iconClassName='glyphicon glyphicon-remove-sign' onClick={() => {this.deletePost(post)}} />
                     <IconButton iconClassName='glyphicon glyphicon-plus' onClick={() => {this.handlePlusVote(post, 'upVote')}}/>
                     <IconButton iconClassName='glyphicon glyphicon-minus' onClick={() => {this.handlePlusVote(post, 'downVote')}}/>
                   </label>
@@ -243,6 +328,7 @@ class Home extends Component {
             </div>
             <div className='clearfix' />
           </div>
+          { this.editPostDialog() }
         </div>
       </div>
     )
@@ -260,7 +346,9 @@ function mapDispatchToProps (dispatch) {
   return {
     retrieveHome: () => dispatch(RetrieveActions.retrieveHomeRequest()),
     uploadPost: (post) => dispatch(UploadActions.uploadRequest(post)),
-    votePost: (post) => dispatch(UploadActions.votePostRequest(post))
+    votePost: (post) => dispatch(UploadActions.votePostRequest(post)),
+    editPost: (post) => dispatch(UploadActions.editPostRequest(post)),
+    deletePost: (id) => dispatch(UploadActions.deletePostRequest(id))
   }
 }
 

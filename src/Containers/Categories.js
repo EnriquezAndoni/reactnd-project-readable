@@ -28,7 +28,7 @@ import './Styles/style.css'
 
 
 // UIID
-const uuidv4 = require('uuid/v4')
+import uuidv4 from 'uuid/v4'
 
 class Categories extends Component {
   constructor (props) {
@@ -39,7 +39,8 @@ class Categories extends Component {
       author: '',
       title: '',
       body: '',
-      category: props.match.params.category
+      category: props.match.params.category,
+      posts: []
     }
   }
 
@@ -48,14 +49,26 @@ class Categories extends Component {
     this.props.loadPosts(parameters)
   }
 
+  componentWillReceiveProps (nextProps) {
+    this.forceUpdate()
+    if (nextProps.match.params.category !== this.props.match.params.category) {
+      const parameters = { call: Globals.post, category: nextProps.match.params.category }
+      this.props.loadPosts(parameters)
+    }
+
+    if (nextProps.posts !== this.state.posts) {
+      this.setState({ posts: nextProps.posts })
+    }
+  }
+
   handleChangeFilter = (event, index, value) => this.setState({filter: value})
 
-  renderPost = (allPosts) => {
-    const { filter } = this.state
+  renderPost = () => {
+    const { filter, posts } = this.state
     let render = []
-    if (allPosts !== null) {
+    if (posts !== null) {
       let helper = []
-      Object.assign(helper, allPosts)
+      Object.assign(helper, posts)
       if (filter !== null) {
         switch (filter) {
           case 'date':
@@ -70,7 +83,6 @@ class Categories extends Component {
 
       for (const post of helper) {
         const ts = new Date(post.timestamp)
-
         if (post.deleted === false) {
           render.push(
             <div className='about-tre' key={post.id}>
@@ -103,7 +115,7 @@ class Categories extends Component {
       option
     }
     this.props.votePost(post)
-    const parameters = { call: Globals.post, category: this.state.category }
+    const parameters = { call: Globals.post, category: this.props.match.params.category }
     this.props.loadPosts(parameters)
   }
 
@@ -176,9 +188,30 @@ class Categories extends Component {
     )
   }
 
+  renderCategories = (categories) => {
+    let render = []
+    if (categories !== null) {
+      categories.categories.forEach(category => {
+        render.push(
+          <div className='might-grid' key={category.name}>
+            <div className='might-top'>
+              <Link to={category.path}>
+                <h4>{category.name}</h4>
+              </Link>
+              <p>Find the best post related to this category.</p>
+            </div>
+            <div className='clearfix' />
+          </div>
+        )
+      })
+    }
+
+    return render
+  }
+
   render () {
     const { filter, category } = this.state
-    const { posts, categories } = this.props
+    const { categories } = this.props
 
     if (categories === null) return null
 
@@ -209,13 +242,17 @@ class Categories extends Component {
                       <MenuItem value={'date'} primaryText={'Order by date'} />
                       <MenuItem value={'votes'} primaryText={'Order by votes'} />
                     </SelectField>
-                    { this.renderPost(posts) }
+                    { this.renderPost() }
                   </div>
                 </div>
               </div>
               <div className='col-md-4 about-right heading'>
-                <div className='abt-2'>
+                <div className='abt-1'>
                   { this.renderDialog() }
+                </div>
+                <div className='abt-2'>
+                  <h3>BEST CATEGORIES</h3>
+                  { this.renderCategories(categories) }
                 </div>
               </div>
               <div className='clearfix' />
