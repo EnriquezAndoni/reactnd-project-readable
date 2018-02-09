@@ -84,8 +84,8 @@ class Home extends Component {
       }
 
       for (const post of helper) {
-        const time = post.timestamp
-        const ts = new Date(time)
+        const ts = new Date(post.timestamp)
+
         if (post.deleted === false) {
           render.push(
             <div className='about-tre' key={post.id}>

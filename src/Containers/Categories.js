@@ -69,8 +69,7 @@ class Categories extends Component {
       }
 
       for (const post of helper) {
-        const time = post.timestamp
-        const ts = new Date(time)
+        const ts = new Date(post.timestamp)
 
         if (post.deleted === false) {
           render.push(
@@ -181,7 +180,7 @@ class Categories extends Component {
     const { filter, category } = this.state
     const { posts, categories } = this.props
 
-    if (categories === null) return <div/>
+    if (categories === null) return null
 
     let redirect = true
 

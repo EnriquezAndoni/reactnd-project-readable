@@ -19,7 +19,7 @@ import './Styles/bootstrap.css'
 import './Styles/style.css'
 
 // UIID
-const uuidv4 = require('uuid/v4')
+import uuidv4 from 'uuid/v4'
 
 class Post extends Component {
   constructor (props) {
@@ -45,8 +45,7 @@ class Post extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.detail === null) {
-      let path = this.props.location.pathname
-      let id = this.cleanPath(path)
+      const id = this.props.match.params.id
       for (let post of nextProps.posts) {
         if (post.id === id) {
           this.props.loadContent(id)
@@ -57,18 +56,11 @@ class Post extends Component {
     }
   }
 
-  cleanPath = (path) => {
-    let res = path.split('/')
-    this.setState({ category: res[1]})
-    return res[2]
-  }
-
   renderComments = (comments) => {
     let render = []
     comments.forEach(comment => {
       if (comment.deleted === false) {
-        const time = comment.timestamp
-        const ts = new Date(time)
+        const ts = new Date(comment.timestamp)
         render.push(
           <div className='media' key={comment.id}>
             <div className='media-body'>
@@ -128,6 +120,7 @@ class Post extends Component {
         /><br />
         <TextField
           hintText='Author'
+          disabled
           fullWidth={true}
           onChange={(event, value) => this.handleAuthor(value)}
         /><br />
@@ -302,8 +295,7 @@ class Post extends Component {
     if (posts === null) return <div />
     else if (detail === null || comments === null) return <NoMatch/>
 
-    const time = detail.timestamp
-    const ts = new Date(time)
+    const ts = new Date(detail.timestamp)
 
     let redirect = true
 

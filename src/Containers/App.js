@@ -35,7 +35,7 @@ class App extends Component {
    * @description Load a predefined language
    */
   componentDidMount () {
-    const language = this.props.language
+    const { language } = this.props
     this.props.loadLanguage(language)
   }
 
